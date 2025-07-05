@@ -10,6 +10,7 @@ function Widget() {
   const [size, setSize] = useSyncedState<Size>('size', 'small')
   const [backgroundColor, setBackgroundColor] = useSyncedState<string>('backgroundColor', '#FFFFFF')
   const [textColor, setTextColor] = useSyncedState<string>('textColor', '#000000')
+  const [width, setWidth] = useSyncedState<number>('width', 72)
 
   usePropertyMenu(
     [
@@ -32,6 +33,17 @@ function Widget() {
           { option: 'small', label: 'Small' },
           { option: 'medium', label: 'Medium' },
           { option: 'large', label: 'Large' },
+        ],
+      },
+      {
+        itemType: 'dropdown',
+        propertyName: 'width',
+        tooltip: 'Widget Width',
+        selectedOption: width.toString(),
+        options: [
+          { option: '52', label: 'Narrow' },
+          { option: '72', label: 'Normal' },
+          { option: '104', label: 'Wide' },
         ],
       },
       {
@@ -75,6 +87,8 @@ function Widget() {
         setWidgetType(propertyValue)
       } else if (propertyName === 'size' && propertyValue) {
         setSize(propertyValue as Size)
+      } else if (propertyName === 'width' && propertyValue) {
+        setWidth(parseInt(propertyValue))
       } else if (propertyName === 'backgroundColor' && propertyValue) {
         setBackgroundColor(propertyValue)
       } else if (propertyName === 'textColor' && propertyValue) {
@@ -84,44 +98,38 @@ function Widget() {
   )
 
   if (widgetType === 'point') {
-    return <PointWidget size={size} backgroundColor={backgroundColor} textColor={textColor} />
+    return <PointWidget size={size} backgroundColor={backgroundColor} textColor={textColor} width={width} />
   } else {
     return <CounterWidget />
   }
 }
 
-function PointWidget({ size, backgroundColor, textColor }: { size: Size; backgroundColor: string; textColor: string }) {
+function PointWidget({ size, backgroundColor, textColor, width }: { size: Size; backgroundColor: string; textColor: string; width: number }) {
   const [point, setPoint] = useSyncedState<number>('point', 0)
   useStickable()
 
   // サイズ設定を定義
   const sizeConfig: Record<Size, {
     fontSize: number
-    width: number
     padding: number
     cornerRadius: number
   }> = {
     small: {
       fontSize: 16,
-      width: 72,
       padding: 6,
       cornerRadius: 4
     },
     medium: {
       fontSize: 24,
-      width: 72,
       padding: 8,
       cornerRadius: 8
     },
     large: {
       fontSize: 32,
-      width: 72,
       padding: 12,
       cornerRadius: 10
     }
   }
-
-
 
   const config = sizeConfig[size]
 
@@ -144,7 +152,7 @@ function PointWidget({ size, backgroundColor, textColor }: { size: Size; backgro
           }
         }}
         fontSize={config.fontSize}
-        width={config.width}
+        width={width}
         horizontalAlignText={'center'}
         fill={textColor}
       />
