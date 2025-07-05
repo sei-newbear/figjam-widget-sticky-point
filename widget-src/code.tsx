@@ -77,7 +77,7 @@ function Widget() {
 }
 
 function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: string }) {
-  const [count, setCount] = useSyncedState('count', 0)
+  const [count, setCount] = useSyncedState<number>('count', 0)
   useStickable()
 
   // サイズ設定を定義
@@ -134,10 +134,10 @@ function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: s
       strokeWidth={1}
     >
       <Input
-        value={String(count)}
+        value={count.toString()}
         placeholder="0"
         onTextEditEnd={(e) => {
-          const newValue = parseInt(e.characters, 10)
+          const newValue = parseFloat(e.characters)
           if (!isNaN(newValue)) {
             setCount(newValue)
           }
