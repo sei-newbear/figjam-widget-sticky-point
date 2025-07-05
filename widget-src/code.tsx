@@ -1,10 +1,13 @@
 // This is a widget that can be either a "Point" counter or a "Counter" that sums up all points.
 
 const { widget } = figma
-const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, Input } = widget
+const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, Input, useEffect } = widget
+
+type Size = 'small' | 'medium' | 'large'
 
 function Widget() {
   const [widgetType, setWidgetType] = useSyncedState('widgetType', 'point')
+  const [size, setSize] = useSyncedState<Size>('size', 'small')
 
   usePropertyMenu(
     [
@@ -18,31 +21,72 @@ function Widget() {
           { option: 'counter', label: 'Counter' },
         ],
       },
+      {
+        itemType: 'dropdown',
+        propertyName: 'size',
+        tooltip: 'Widget Size',
+        selectedOption: size,
+        options: [
+          { option: 'small', label: 'Small' },
+          { option: 'medium', label: 'Medium' },
+          { option: 'large', label: 'Large' },
+        ],
+      },
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'widgetType' && propertyValue) {
         setWidgetType(propertyValue)
+      } else if (propertyName === 'size' && propertyValue) {
+        setSize(propertyValue as Size)
       }
     },
   )
 
   if (widgetType === 'point') {
-    return <PointWidget />
+    return <PointWidget size={size} />
   } else {
     return <CounterWidget />
   }
 }
 
-function PointWidget() {
+function PointWidget({ size }: { size: Size }) {
   const [count, setCount] = useSyncedState('count', 0)
   useStickable()
+
+  // サイズ設定を定義
+  const sizeConfig: Record<Size, {
+    fontSize: number
+    width: number
+    padding: number
+    cornerRadius: number
+  }> = {
+    small: {
+      fontSize: 16,
+      width: 72,
+      padding: 6,
+      cornerRadius: 4
+    },
+    medium: {
+      fontSize: 24,
+      width: 72,
+      padding: 8,
+      cornerRadius: 8
+    },
+    large: {
+      fontSize: 32,
+      width: 72,
+      padding: 12,
+      cornerRadius: 10
+    }
+  }
+
+  const config = sizeConfig[size]
 
   return (
     <AutoLayout
       verticalAlignItems={'center'}
-      // spacing={8}
-      padding={8}
-      cornerRadius={8}
+      padding={config.padding}
+      cornerRadius={config.cornerRadius}
       fill={'#FFFFFF'}
       stroke={'#E6E6E6'}
     >
@@ -55,8 +99,8 @@ function PointWidget() {
             setCount(newValue)
           }
         }}
-        fontSize={24}
-        width={64}
+        fontSize={config.fontSize}
+        width={config.width}
         horizontalAlignText={'center'}
       />
     </AutoLayout>
