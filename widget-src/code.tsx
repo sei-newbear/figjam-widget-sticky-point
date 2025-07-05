@@ -1,10 +1,11 @@
 // This is a counter widget with buttons to increment and decrement the number.
 
 const { widget } = figma
-const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG } = widget
+const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable } = widget
 
 function Widget() {
   const [count, setCount] = useSyncedState('count', 0)
+  useStickable()
 
   if (count !== 0) {
     usePropertyMenu(
