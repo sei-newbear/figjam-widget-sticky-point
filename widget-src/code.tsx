@@ -15,11 +15,11 @@ function Widget() {
       {
         itemType: 'dropdown',
         propertyName: 'widgetType',
-        tooltip: 'Widget Type',
+        tooltip: 'Widget type',
         selectedOption: widgetType,
         options: [
           { option: 'point', label: 'Point' },
-          { option: 'counter', label: 'Counter' },
+          { option: 'counter', label: 'Counter Tool' },
         ],
       },
       {
@@ -77,7 +77,7 @@ function Widget() {
 }
 
 function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: string }) {
-  const [count, setCount] = useSyncedState<number>('count', 0)
+  const [point, setPoint] = useSyncedState<number>('point', 0)
   useStickable()
 
   // サイズ設定を定義
@@ -130,16 +130,16 @@ function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: s
       padding={config.padding}
       cornerRadius={config.cornerRadius}
       fill={backgroundColor}
-      stroke={'#E0E0E0'}
+      stroke={'#000000'}
       strokeWidth={1}
     >
       <Input
-        value={count.toString()}
+        value={point.toString()}
         placeholder="0"
         onTextEditEnd={(e) => {
           const newValue = parseFloat(e.characters)
           if (!isNaN(newValue)) {
-            setCount(newValue)
+            setPoint(newValue)
           }
         }}
         fontSize={config.fontSize}
@@ -163,9 +163,9 @@ function CounterWidget() {
     });
 
     const sum = pointWidgets.map(widget => {
-      const count = widget.widgetSyncedState['count']
-      if (typeof count === 'number') {
-        return count
+      const point = widget.widgetSyncedState['point']
+      if (typeof point === 'number') {
+        return point
       }
       return 0
     }).reduce((a, b) => a + b, 0);
@@ -176,20 +176,35 @@ function CounterWidget() {
   return (
     <AutoLayout
       verticalAlignItems={'center'}
-      spacing={8}
+      spacing={16}
       padding={16}
       cornerRadius={8}
       fill={'#FFFFFF'}
-      stroke={'#E6E6E6'}
+      stroke={'#000000'}
+      direction="vertical"
     >
-      <Text fontSize={24}>Total:</Text>
-      <Text fontSize={32}>{total}</Text>
-      <SVG
-        src={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4C7.58 4 4.01 7.58 4.01 12C4.01 16.42 7.58 20 12 20C15.73 20 18.84 17.45 19.73 14H17.65C16.83 16.33 14.61 18 12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C13.66 6 15.14 6.69 16.22 7.78L13 11H20V4L17.65 6.35Z" fill="black"/>
-        </svg>`}
-        onClick={calculateTotal}
-      />
+      <Text fontSize={40} fontWeight={600}>Point Counter</Text>
+      
+      <AutoLayout verticalAlignItems={'center'}>
+        <Text fontSize={24}>Total: </Text>
+        <Text fontSize={24}>{total}</Text>
+        <Text fontSize={24}> points</Text>
+      </AutoLayout>
+      <AutoLayout horizontalAlignItems={'end'}>
+        <AutoLayout
+          stroke={'#000000'}
+          fill={'#FFFFFF'}
+          cornerRadius={8}
+          padding={8}
+          width={100}
+          height={40}
+          verticalAlignItems={'center'}
+          horizontalAlignItems={'center'}
+          onClick={calculateTotal}
+        >
+          <Text fontSize={24}>Count</Text>
+        </AutoLayout>
+      </AutoLayout>
     </AutoLayout>
   )
 }
@@ -198,18 +213,28 @@ widget.register(Widget)
 
 // Stickyノートを収集する関数（再帰的に探索）
 function getPointWidgets(node: SceneNode): WidgetNode[] {
-  let pointWidgets: WidgetNode[] = [];
+  const isPointWidget = (node: SceneNode): node is WidgetNode => {
+    return node.type === 'WIDGET' && node.widgetId === figma.widgetId && node.widgetSyncedState['widgetType'] === 'point'
+  }
+
+  const pointWidgets: WidgetNode[] = [];
+
+  // Stickyノートの場合、stickies配列に追加
+  if (isPointWidget(node)) {
+    pointWidgets.push(node);
+  }
 
   // セクションの場合、その中のすべての子要素を再帰的に処理
   if (node.type === 'SECTION') {
     node.children.forEach(child => {
-      pointWidgets = pointWidgets.concat(getPointWidgets(child));
+      pointWidgets.push(...getPointWidgets(child));
     });
   }
 
-  // Stickyノートの場合、stickies配列に追加
-  if (node.type === 'WIDGET' && node.widgetId === figma.widgetId && node.widgetSyncedState['widgetType'] === 'point') {
-    pointWidgets.push(node);
+  if (node.type === 'STICKY') {
+    node.stuckNodes.forEach(stuckNode => {
+      pointWidgets.push(...getPointWidgets(stuckNode));
+    })
   }
 
   return pointWidgets;
