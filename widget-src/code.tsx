@@ -173,6 +173,7 @@ function CounterWidget() {
   return (
     <AutoLayout
       verticalAlignItems={'center'}
+      horizontalAlignItems={'center'}
       spacing={24}
       padding={24}
       cornerRadius={12}
@@ -180,7 +181,7 @@ function CounterWidget() {
       stroke={'#E0E0E0'}
       strokeWidth={1}
       direction="vertical"
-      width={280}
+      width={320}
     >
       <Text fontSize={32} fontWeight={700} fill={'#1A1A1A'}>Point Counter</Text>
       
