@@ -8,6 +8,7 @@ type Size = 'small' | 'medium' | 'large'
 function Widget() {
   const [widgetType, setWidgetType] = useSyncedState('widgetType', 'point')
   const [size, setSize] = useSyncedState<Size>('size', 'small')
+  const [backgroundColor, setBackgroundColor] = useSyncedState<string>('backgroundColor', '#FFFFFF')
 
   usePropertyMenu(
     [
@@ -32,24 +33,42 @@ function Widget() {
           { option: 'large', label: 'Large' },
         ],
       },
+      {
+        itemType: 'color-selector',
+        propertyName: 'backgroundColor',
+        tooltip: 'Background Color',
+        selectedOption: backgroundColor,
+        options: [
+          { option: '#FFFFFF', tooltip: 'White' },
+          { option: '#FFF9C4', tooltip: 'Yellow' },
+          { option: '#C8E6C9', tooltip: 'Green' },
+          { option: '#BBDEFB', tooltip: 'Blue' },
+          { option: '#F8BBD9', tooltip: 'Pink' },
+          { option: '#E1BEE7', tooltip: 'Purple' },
+          { option: '#FFCDD2', tooltip: 'Red' },
+          { option: '#FFE0B2', tooltip: 'Orange' },
+        ],
+      },
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'widgetType' && propertyValue) {
         setWidgetType(propertyValue)
       } else if (propertyName === 'size' && propertyValue) {
         setSize(propertyValue as Size)
+      } else if (propertyName === 'backgroundColor' && propertyValue) {
+        setBackgroundColor(propertyValue)
       }
     },
   )
 
   if (widgetType === 'point') {
-    return <PointWidget size={size} />
+    return <PointWidget size={size} backgroundColor={backgroundColor} />
   } else {
     return <CounterWidget />
   }
 }
 
-function PointWidget({ size }: { size: Size }) {
+function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: string }) {
   const [count, setCount] = useSyncedState('count', 0)
   useStickable()
 
@@ -87,8 +106,7 @@ function PointWidget({ size }: { size: Size }) {
       verticalAlignItems={'center'}
       padding={config.padding}
       cornerRadius={config.cornerRadius}
-      fill={'#FFFFFF'}
-      stroke={'#E6E6E6'}
+      fill={backgroundColor}
     >
       <Input
         value={String(count)}
