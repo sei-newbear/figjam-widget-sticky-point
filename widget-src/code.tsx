@@ -9,6 +9,7 @@ function Widget() {
   const [widgetType, setWidgetType] = useSyncedState('widgetType', 'point')
   const [size, setSize] = useSyncedState<Size>('size', 'small')
   const [backgroundColor, setBackgroundColor] = useSyncedState<string>('backgroundColor', '#FFFFFF')
+  const [textColor, setTextColor] = useSyncedState<string>('textColor', '#000000')
 
   usePropertyMenu(
     [
@@ -57,6 +58,17 @@ function Widget() {
           { option: '#E65100', tooltip: 'Dark Orange' },
         ],
       },
+      {
+        itemType: 'color-selector',
+        propertyName: 'textColor',
+        tooltip: 'Text Color',
+        selectedOption: textColor,
+        options: [
+          { option: '#000000', tooltip: 'Black' },
+          { option: '#FFFFFF', tooltip: 'White' },
+          { option: '#FF0000', tooltip: 'Red' },
+        ],
+      },
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'widgetType' && propertyValue) {
@@ -65,18 +77,20 @@ function Widget() {
         setSize(propertyValue as Size)
       } else if (propertyName === 'backgroundColor' && propertyValue) {
         setBackgroundColor(propertyValue)
+      } else if (propertyName === 'textColor' && propertyValue) {
+        setTextColor(propertyValue)
       }
     },
   )
 
   if (widgetType === 'point') {
-    return <PointWidget size={size} backgroundColor={backgroundColor} />
+    return <PointWidget size={size} backgroundColor={backgroundColor} textColor={textColor} />
   } else {
     return <CounterWidget />
   }
 }
 
-function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: string }) {
+function PointWidget({ size, backgroundColor, textColor }: { size: Size; backgroundColor: string; textColor: string }) {
   const [point, setPoint] = useSyncedState<number>('point', 0)
   useStickable()
 
@@ -107,22 +121,9 @@ function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: s
     }
   }
 
-  // 濃い色かどうかを判定する関数
-  const isDarkColor = (color: string): boolean => {
-    const darkColors = [
-      '#F57F17', // Dark Yellow
-      '#2E7D32', // Dark Green
-      '#1565C0', // Dark Blue
-      '#C2185B', // Dark Pink
-      '#7B1FA2', // Dark Purple
-      '#D32F2F', // Dark Red
-      '#E65100', // Dark Orange
-    ]
-    return darkColors.includes(color)
-  }
+
 
   const config = sizeConfig[size]
-  const textColor = isDarkColor(backgroundColor) ? '#FFFFFF' : '#000000'
 
   return (
     <AutoLayout
