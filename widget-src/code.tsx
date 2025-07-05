@@ -130,6 +130,8 @@ function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: s
       padding={config.padding}
       cornerRadius={config.cornerRadius}
       fill={backgroundColor}
+      stroke={'#E0E0E0'}
+      strokeWidth={1}
     >
       <Input
         value={String(count)}
