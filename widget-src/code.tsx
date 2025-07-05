@@ -170,6 +170,12 @@ function CounterWidget() {
     const selection = figma.currentPage.selection;
     const pointWidgets: WidgetNode[] = getPointWidgetsFromSceneNodes(selection);
 
+    if (pointWidgets.length === 0) {
+      setTotal(0)
+      figma.notify('No point widgets selected')
+      return
+    }
+
     const sum = pointWidgets.map(widget => {
       const point = widget.widgetSyncedState['point']
       if (typeof point === 'number') {
