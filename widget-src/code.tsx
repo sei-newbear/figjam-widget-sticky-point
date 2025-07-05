@@ -41,12 +41,20 @@ function Widget() {
         options: [
           { option: '#FFFFFF', tooltip: 'White' },
           { option: '#FFF9C4', tooltip: 'Yellow' },
+          { option: '#FFD800', tooltip: 'Bright Yellow' },
           { option: '#C8E6C9', tooltip: 'Green' },
           { option: '#BBDEFB', tooltip: 'Blue' },
           { option: '#F8BBD9', tooltip: 'Pink' },
           { option: '#E1BEE7', tooltip: 'Purple' },
           { option: '#FFCDD2', tooltip: 'Red' },
           { option: '#FFE0B2', tooltip: 'Orange' },
+          { option: '#F57F17', tooltip: 'Dark Yellow' },
+          { option: '#2E7D32', tooltip: 'Dark Green' },
+          { option: '#1565C0', tooltip: 'Dark Blue' },
+          { option: '#C2185B', tooltip: 'Dark Pink' },
+          { option: '#7B1FA2', tooltip: 'Dark Purple' },
+          { option: '#D32F2F', tooltip: 'Dark Red' },
+          { option: '#E65100', tooltip: 'Dark Orange' },
         ],
       },
     ],
@@ -99,7 +107,22 @@ function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: s
     }
   }
 
+  // 濃い色かどうかを判定する関数
+  const isDarkColor = (color: string): boolean => {
+    const darkColors = [
+      '#F57F17', // Dark Yellow
+      '#2E7D32', // Dark Green
+      '#1565C0', // Dark Blue
+      '#C2185B', // Dark Pink
+      '#7B1FA2', // Dark Purple
+      '#D32F2F', // Dark Red
+      '#E65100', // Dark Orange
+    ]
+    return darkColors.includes(color)
+  }
+
   const config = sizeConfig[size]
+  const textColor = isDarkColor(backgroundColor) ? '#FFFFFF' : '#000000'
 
   return (
     <AutoLayout
@@ -120,6 +143,7 @@ function PointWidget({ size, backgroundColor }: { size: Size; backgroundColor: s
         fontSize={config.fontSize}
         width={config.width}
         horizontalAlignText={'center'}
+        fill={textColor}
       />
     </AutoLayout>
   )
