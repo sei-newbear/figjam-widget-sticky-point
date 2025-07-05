@@ -157,10 +157,7 @@ function CounterWidget() {
   const calculateTotal = () => {
     // 選択されたすべてのノードについてStickyノートを収集
     const selection = figma.currentPage.selection;
-    const pointWidgets: WidgetNode[] = [];
-    selection.forEach(node => {
-      pointWidgets.push(...getPointWidgets(node));
-    });
+    const pointWidgets: WidgetNode[] = getPointWidgetsFromSceneNodes(selection);
 
     const sum = pointWidgets.map(widget => {
       const point = widget.widgetSyncedState['point']
@@ -176,33 +173,44 @@ function CounterWidget() {
   return (
     <AutoLayout
       verticalAlignItems={'center'}
-      spacing={16}
-      padding={16}
-      cornerRadius={8}
+      spacing={24}
+      padding={24}
+      cornerRadius={12}
       fill={'#FFFFFF'}
-      stroke={'#000000'}
+      stroke={'#E0E0E0'}
+      strokeWidth={1}
       direction="vertical"
+      width={280}
     >
-      <Text fontSize={40} fontWeight={600}>Point Counter</Text>
+      <Text fontSize={32} fontWeight={700} fill={'#1A1A1A'}>Point Counter</Text>
       
-      <AutoLayout verticalAlignItems={'center'}>
-        <Text fontSize={24}>Total: </Text>
-        <Text fontSize={24}>{total}</Text>
-        <Text fontSize={24}> points</Text>
+      <AutoLayout 
+        verticalAlignItems={'center'} 
+        spacing={8}
+        padding={16}
+        cornerRadius={8}
+        fill={'#F8F9FA'}
+        stroke={'#E9ECEF'}
+        strokeWidth={1}
+      >
+        <Text fontSize={20} fontWeight={500} fill={'#495057'}>Total:</Text>
+        <Text fontSize={28} fontWeight={700} fill={'#0066FF'}>{total}</Text>
+        <Text fontSize={20} fontWeight={500} fill={'#495057'}>points</Text>
       </AutoLayout>
-      <AutoLayout horizontalAlignItems={'end'}>
+      
+      <AutoLayout horizontalAlignItems={'center'} width="fill-parent">
         <AutoLayout
-          stroke={'#000000'}
-          fill={'#FFFFFF'}
+          stroke={'#0066FF'}
+          fill={'#0066FF'}
           cornerRadius={8}
-          padding={8}
-          width={100}
-          height={40}
+          padding={12}
+          width={120}
+          height={48}
           verticalAlignItems={'center'}
           horizontalAlignItems={'center'}
           onClick={calculateTotal}
         >
-          <Text fontSize={24}>Count</Text>
+          <Text fontSize={18} fontWeight={600} fill={'#FFFFFF'}>Count</Text>
         </AutoLayout>
       </AutoLayout>
     </AutoLayout>
@@ -210,6 +218,20 @@ function CounterWidget() {
 }
 
 widget.register(Widget)
+
+function getPointWidgetsFromSceneNodes(sceneNodes: readonly SceneNode[]): WidgetNode[] {
+  const pointWidgetsMap = new Map<string, WidgetNode>();
+  
+  sceneNodes.forEach(node => {
+    const widgets = getPointWidgets(node);
+    widgets.forEach(widget => {
+      // IDでユニークにする
+      pointWidgetsMap.set(widget.id, widget);
+    });
+  });
+
+  return Array.from(pointWidgetsMap.values());
+}
 
 // Stickyノートを収集する関数（再帰的に探索）
 function getPointWidgets(node: SceneNode): WidgetNode[] {
