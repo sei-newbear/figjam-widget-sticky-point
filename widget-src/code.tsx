@@ -164,6 +164,8 @@ function PointWidget({ size, backgroundColor, textColor, width }: { size: Size; 
 
 function CounterWidget() {
   const [total, setTotal] = useSyncedState('total', 0)
+  const [pointCounts, setPointCounts] = useSyncedState<{ [point: number]: number }>('pointCounts', {})
+  const [showDetails, setShowDetails] = useSyncedState('showDetails', false)
 
   const calculateTotal = () => {
     // 選択されたすべてのノードについてStickyノートを収集
@@ -172,19 +174,28 @@ function CounterWidget() {
 
     if (pointWidgets.length === 0) {
       setTotal(0)
+      setPointCounts({})
       figma.notify('No point widgets selected')
       return
     }
 
-    const sum = pointWidgets.map(widget => {
+    const points = pointWidgets.map(widget => {
       const point = widget.widgetSyncedState['point']
       if (typeof point === 'number') {
         return point
       }
       return 0
-    }).reduce((a, b) => a + b, 0);
+    });
 
-    setTotal(sum)
+    const total = points.reduce((acc, curr) => acc + curr, 0)
+    setTotal(total)
+
+    // ポイント値ごとに件数を集計
+    const counts = points.reduce<{ [point: number]: number }>((acc, point) => {
+      acc[point] = (acc[point] || 0) + 1
+      return acc
+    }, {})
+    setPointCounts(counts)
   }
 
   return (
@@ -215,6 +226,38 @@ function CounterWidget() {
         <Text fontSize={28} fontWeight={700} fill={'#0066FF'}>{total}</Text>
         <Text fontSize={20} fontWeight={500} fill={'#495057'}>points</Text>
       </AutoLayout>
+
+      {/* 詳細開閉トグルボタン */}
+      <AutoLayout padding={0} spacing={8}>
+        <Text
+          fontSize={14}
+          fill={'#0066FF'}
+          onClick={() => setShowDetails(!showDetails)}
+          fontWeight={600}
+        >
+          {showDetails ? 'Hide details' : 'Show details'}
+        </Text>
+      </AutoLayout>
+
+      {/* ポイント値ごとの件数リスト */}
+      {showDetails && Object.keys(pointCounts).length > 0 && (
+        <AutoLayout direction="vertical" spacing={0} padding={8} fill={'#F4F4F4'} cornerRadius={6} width={'fill-parent'}>
+          <Text fontSize={16} fontWeight={600} fill={'#333'}>Points breakdown:</Text>
+          {Object.keys(pointCounts)
+            .sort((a, b) => Number(a) - Number(b))
+            .map((point, idx, arr) => (
+              <>
+                <AutoLayout key={point} direction="horizontal" width={'fill-parent'} padding={{ vertical: 8, horizontal: 4 }}>
+                  <Text fontSize={15} fontWeight={700} fill={'#222'} width={"fill-parent"}>{point} pt</Text>
+                  <Text fontSize={15} fill={'#0066FF'}>{pointCounts[Number(point)]} items</Text>
+                </AutoLayout>
+                {idx < arr.length - 1 && (
+                  <AutoLayout width={'fill-parent'} height={1} fill={'#E0E0E0'} />
+                )}
+              </>
+            ))}
+        </AutoLayout>
+      )}
       
       <AutoLayout horizontalAlignItems={'center'} width="fill-parent">
         <AutoLayout
