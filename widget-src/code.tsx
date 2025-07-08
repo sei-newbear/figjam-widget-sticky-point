@@ -1,7 +1,7 @@
 // This is a widget that can be either a "Point" counter or a "Counter" that sums up all points.
 
 const { widget } = figma
-const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, Input, useEffect } = widget
+const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, Input, useEffect, useWidgetNodeId } = widget
 
 type Size = 'small' | 'medium' | 'large'
 
@@ -108,7 +108,19 @@ function Widget() {
 
 function PointWidget({ size, backgroundColor, textColor, width }: { size: Size; backgroundColor: string; textColor: string; width: number }) {
   const [point, setPoint] = useSyncedState<number>('point', 0)
-  useStickable()
+  const widgetNodId = useWidgetNodeId()
+  useStickable(async (e: WidgetStuckEvent) => {
+    const oldHostId = e.oldHostId
+    if (oldHostId) {
+      const oldHost = await figma.getNodeByIdAsync(oldHostId)
+      if(!oldHost){
+        const widgetNode = await figma.getNodeByIdAsync(widgetNodId)
+        if(widgetNode){
+          widgetNode.remove()
+        }
+      }
+    }
+  })
 
   // サイズ設定を定義
   const sizeConfig: Record<Size, {
