@@ -178,16 +178,33 @@ function CounterWidget() {
   const [total, setTotal] = useSyncedState('total', 0)
   const [pointCounts, setPointCounts] = useSyncedState<{ [point: number]: number }>('pointCounts', {})
   const [showDetails, setShowDetails] = useSyncedState('showDetails', false)
+  const [selectionInfo, setSelectionInfo] = useSyncedState('selectionInfo', 'Not selected')
+  const widgetId = useWidgetNodeId()
 
-  const calculateTotal = () => {
-    // 選択されたすべてのノードについてStickyノートを収集
-    const selection = figma.currentPage.selection;
+  const calculateTotal = async () => {
+    let selection = figma.currentPage.selection
+    const widgetNode = await figma.getNodeByIdAsync(widgetId)
+
+    // 選択がない場合、またはカウンターウィジェット自身のみが選択されている場合
+    if (selection.length === 0 || (selection.length === 1 && selection[0].id === widgetId)) {
+      if (widgetNode && widgetNode.parent && widgetNode.parent.type === 'SECTION') {
+        selection = [widgetNode.parent]
+        setSelectionInfo(`Section: ${widgetNode.parent.name}`)
+      } else {
+        setSelectionInfo('Not selected')
+      }
+    } else if (selection.length === 1 && selection[0].type === 'SECTION') {
+      setSelectionInfo(`Section: ${selection[0].name}`)
+    } else if (selection.length > 0) {
+      setSelectionInfo('Multiple stickies')
+    }
+
     const pointWidgets: WidgetNode[] = getPointWidgetsFromSceneNodes(selection);
 
     if (pointWidgets.length === 0) {
       setTotal(0)
       setPointCounts({})
-      figma.notify('No point widgets selected')
+      figma.notify('No point widgets found in the selection or parent section.')
       return
     }
 
@@ -214,7 +231,7 @@ function CounterWidget() {
     <AutoLayout
       verticalAlignItems={'center'}
       horizontalAlignItems={'center'}
-      spacing={24}
+      spacing={16}
       padding={24}
       cornerRadius={12}
       fill={'#FFFFFF'}
@@ -224,6 +241,7 @@ function CounterWidget() {
       width={320}
     >
       <Text fontSize={32} fontWeight={700} fill={'#1A1A1A'}>Point Counter</Text>
+      <Text fontSize={14} fill={'#6C757D'}>{selectionInfo}</Text>
       
       <AutoLayout 
         verticalAlignItems={'center'} 
