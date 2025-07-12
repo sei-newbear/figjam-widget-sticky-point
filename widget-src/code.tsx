@@ -231,30 +231,30 @@ function CounterWidget() {
     <AutoLayout
       verticalAlignItems={'center'}
       horizontalAlignItems={'center'}
-      spacing={16}
-      padding={24}
+      spacing={12}
+      padding={20}
       cornerRadius={12}
       fill={'#FFFFFF'}
       stroke={'#E0E0E0'}
       strokeWidth={1}
       direction="vertical"
-      width={320}
+      width={280}
     >
-      <Text fontSize={32} fontWeight={700} fill={'#1A1A1A'}>Point Counter</Text>
+      <Text fontSize={28} fontWeight={700} fill={'#1A1A1A'}>Point Counter</Text>
       <Text fontSize={14} fill={'#6C757D'}>{selectionInfo}</Text>
       
       <AutoLayout 
         verticalAlignItems={'center'} 
         spacing={8}
-        padding={16}
+        padding={12}
         cornerRadius={8}
         fill={'#F8F9FA'}
         stroke={'#E9ECEF'}
         strokeWidth={1}
       >
-        <Text fontSize={20} fontWeight={500} fill={'#495057'}>Total:</Text>
-        <Text fontSize={28} fontWeight={700} fill={'#0066FF'}>{total}</Text>
-        <Text fontSize={20} fontWeight={500} fill={'#495057'}>points</Text>
+        <Text fontSize={18} fontWeight={500} fill={'#495057'}>Total:</Text>
+        <Text fontSize={24} fontWeight={700} fill={'#0066FF'}>{total}</Text>
+        <Text fontSize={18} fontWeight={500} fill={'#495057'}>points</Text>
       </AutoLayout>
 
       {/* 詳細開閉トグルボタン */}
@@ -294,14 +294,14 @@ function CounterWidget() {
           stroke={'#0066FF'}
           fill={'#0066FF'}
           cornerRadius={8}
-          padding={12}
-          width={120}
-          height={48}
+          padding={10}
+          width={100}
+          height={40}
           verticalAlignItems={'center'}
           horizontalAlignItems={'center'}
           onClick={calculateTotal}
         >
-          <Text fontSize={18} fontWeight={600} fill={'#FFFFFF'}>Count</Text>
+          <Text fontSize={16} fontWeight={600} fill={'#FFFFFF'}>Count</Text>
         </AutoLayout>
       </AutoLayout>
     </AutoLayout>
