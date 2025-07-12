@@ -1,10 +1,11 @@
 // This is a widget that can be either a "Point" counter or a "Counter" that sums up all points.
 
 const { widget } = figma
-const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, Input, useEffect, useWidgetNodeId } = widget
+const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, Input, useWidgetNodeId } = widget
 
 type WidgetType = 'point' | 'counter'
 type Size = 'small' | 'medium' | 'large'
+type CounterSizeMode = 'normal' | 'compact'
 
 function Widget() {
   const [widgetType, setWidgetType] = useSyncedState<WidgetType>('widgetType', 'point')
@@ -12,6 +13,7 @@ function Widget() {
   const [backgroundColor, setBackgroundColor] = useSyncedState<string>('backgroundColor', '#FFFFFF')
   const [textColor, setTextColor] = useSyncedState<string>('textColor', '#000000')
   const [width, setWidth] = useSyncedState<number>('width', 72)
+  const [counterSizeMode, setCounterSizeMode] = useSyncedState<CounterSizeMode>('counterSizeMode', 'normal')
 
   usePropertyMenu(
     [
@@ -26,67 +28,84 @@ function Widget() {
         ],
       },
       // Point widget用のプロパティ
-      ...(widgetType === 'point' ? [
-        {
-          itemType: 'dropdown' as const,
-          propertyName: 'size',
-          tooltip: 'Widget Size',
-          selectedOption: size,
-          options: [
-            { option: 'small', label: 'Small' },
-            { option: 'medium', label: 'Medium' },
-            { option: 'large', label: 'Large' },
-          ],
-        },
-        {
-          itemType: 'dropdown' as const,
-          propertyName: 'width',
-          tooltip: 'Widget Width',
-          selectedOption: width.toString(),
-          options: [
-            { option: '52', label: 'Narrow' },
-            { option: '72', label: 'Normal' },
-            { option: '104', label: 'Wide' },
-          ],
-        },
-        {
-          itemType: 'color-selector' as const,
-          propertyName: 'backgroundColor',
-          tooltip: 'Background Color',
-          selectedOption: backgroundColor,
-          options: [
-            { option: '#FFFFFF', tooltip: 'White' },
-            { option: '#FFCDD2', tooltip: 'Light Red' },
-            { option: '#FFE0B2', tooltip: 'Light Orange' },
-            { option: '#FFF9C4', tooltip: 'Light Yellow' },
-            { option: '#C8E6C9', tooltip: 'Light Green' },
-            { option: '#BBDEFB', tooltip: 'Light Blue' },
-            { option: '#81D4FA', tooltip: 'Light Cyan' },
-            { option: '#E1BEE7', tooltip: 'Light Purple' },
-            { option: '#F8BBD9', tooltip: 'Light Pink' },
-            { option: '#D32F2F', tooltip: 'Red' },
-            { option: '#E65100', tooltip: 'Orange' },
-            { option: '#FFD800', tooltip: 'Yellow' },
-            { option: '#2E7D32', tooltip: 'Green' },
-            { option: '#1565C0', tooltip: 'Blue' },
-            { option: '#00BCD4', tooltip: 'Cyan' },
-            { option: '#7B1FA2', tooltip: 'Purple' },
-            { option: '#EF5B9C', tooltip: 'Pink' },
-            { option: '#000000', tooltip: 'Black' },
-          ],
-        },
-        {
-          itemType: 'color-selector' as const,
-          propertyName: 'textColor',
-          tooltip: 'Text Color',
-          selectedOption: textColor,
-          options: [
-            { option: '#000000', tooltip: 'Black Font' },
-            { option: '#FFFFFF', tooltip: 'White Font' },
-            { option: '#FF0000', tooltip: 'Red Font' },
-          ],
-        },
-      ] : []),
+      ...(widgetType === 'point'
+        ? [
+            {
+              itemType: 'dropdown' as const,
+              propertyName: 'size',
+              tooltip: 'Widget Size',
+              selectedOption: size,
+              options: [
+                { option: 'small', label: 'Small' },
+                { option: 'medium', label: 'Medium' },
+                { option: 'large', label: 'Large' },
+              ],
+            },
+            {
+              itemType: 'dropdown' as const,
+              propertyName: 'width',
+              tooltip: 'Widget Width',
+              selectedOption: width.toString(),
+              options: [
+                { option: '52', label: 'Narrow' },
+                { option: '72', label: 'Normal' },
+                { option: '104', label: 'Wide' },
+              ],
+            },
+            {
+              itemType: 'color-selector' as const,
+              propertyName: 'backgroundColor',
+              tooltip: 'Background Color',
+              selectedOption: backgroundColor,
+              options: [
+                { option: '#FFFFFF', tooltip: 'White' },
+                { option: '#FFCDD2', tooltip: 'Light Red' },
+                { option: '#FFE0B2', tooltip: 'Light Orange' },
+                { option: '#FFF9C4', tooltip: 'Light Yellow' },
+                { option: '#C8E6C9', tooltip: 'Light Green' },
+                { option: '#BBDEFB', tooltip: 'Light Blue' },
+                { option: '#81D4FA', tooltip: 'Light Cyan' },
+                { option: '#E1BEE7', tooltip: 'Light Purple' },
+                { option: '#F8BBD9', tooltip: 'Light Pink' },
+                { option: '#D32F2F', tooltip: 'Red' },
+                { option: '#E65100', tooltip: 'Orange' },
+                { option: '#FFD800', tooltip: 'Yellow' },
+                { option: '#2E7D32', tooltip: 'Green' },
+                { option: '#1565C0', tooltip: 'Blue' },
+                { option: '#00BCD4', tooltip: 'Cyan' },
+                { option: '#7B1FA2', tooltip: 'Purple' },
+                { option: '#EF5B9C', tooltip: 'Pink' },
+                { option: '#000000', tooltip: 'Black' },
+              ],
+            },
+            {
+              itemType: 'color-selector' as const,
+              propertyName: 'textColor',
+              tooltip: 'Text Color',
+              selectedOption: textColor,
+              options: [
+                { option: '#000000', tooltip: 'Black Font' },
+                { option: '#FFFFFF', tooltip: 'White Font' },
+                { option: '#FF0000', tooltip: 'Red Font' },
+              ],
+            },
+          ]
+        : []),
+      // Counter widget用のプロパティ
+      ...(widgetType === 'counter'
+        ? [
+            {
+              itemType: 'dropdown' as const,
+              propertyName: 'counterSizeMode',
+              tooltip: 'Counter Size',
+              selectedOption: counterSizeMode,
+              options: [
+                { option: 'normal', label: 'Normal' },
+                { option: 'compact', label: 'Compact' },
+              ],
+            },
+          ]
+        : []),
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'widgetType' && propertyValue) {
@@ -99,6 +118,8 @@ function Widget() {
         setBackgroundColor(propertyValue)
       } else if (propertyName === 'textColor' && propertyValue) {
         setTextColor(propertyValue)
+      } else if (propertyName === 'counterSizeMode' && propertyValue) {
+        setCounterSizeMode(propertyValue as CounterSizeMode)
       }
     },
   )
@@ -106,7 +127,7 @@ function Widget() {
   if (widgetType === 'point') {
     return <PointWidget size={size} backgroundColor={backgroundColor} textColor={textColor} width={width} />
   } else {
-    return <CounterWidget />
+    return <CounterWidget counterSizeMode={counterSizeMode} />
   }
 }
 
@@ -178,7 +199,7 @@ function PointWidget({ size, backgroundColor, textColor, width }: { size: Size; 
   )
 }
 
-function CounterWidget() {
+function CounterWidget({ counterSizeMode }: { counterSizeMode: CounterSizeMode }) {
   const [total, setTotal] = useSyncedState('total', 0)
   const [pointCounts, setPointCounts] = useSyncedState<{ [point: number]: number }>('pointCounts', {})
   const [showDetails, setShowDetails] = useSyncedState('showDetails', false)
@@ -200,7 +221,7 @@ function CounterWidget() {
     } else if (selection.length === 1 && selection[0].type === 'SECTION') {
       setSelectionInfo(`Section: ${selection[0].name}`)
     } else if (selection.length > 0) {
-      setSelectionInfo('Multiple stickies')
+      setSelectionInfo('Selected Multiple')
     }
 
     const pointWidgets: WidgetNode[] = getPointWidgetsFromSceneNodes(selection);
@@ -229,6 +250,36 @@ function CounterWidget() {
       return acc
     }, {})
     setPointCounts(counts)
+  }
+
+  if (counterSizeMode === 'compact') {
+    return (
+      <AutoLayout
+        verticalAlignItems={'center'}
+        horizontalAlignItems={'center'}
+        spacing={8}
+        padding={{ vertical: 4, horizontal: 8 }}
+        cornerRadius={8}
+        fill={'#FFFFFF'}
+        stroke={'#E0E0E0'}
+        strokeWidth={1}
+      >
+        <Text fontSize={18} fontWeight={700} fill={'#0066FF'}>{total}</Text>
+        <Text fontSize={14} fontWeight={500} fill={'#495057'}>pts</Text>
+        <AutoLayout
+          onClick={calculateTotal}
+          hoverStyle={{ fill: '#F0F0F0' }}
+          cornerRadius={4}
+          padding={4}
+        >
+          <SVG
+            src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 2V8H8.5" stroke="#0066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.5 22V16H15.5" stroke="#0066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.9999 8C21.7499 5.04167 20.4999 3.58333 17.4999 2.5L8.49994 2.5" stroke="#0066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.00006 16C2.25006 18.9583 3.50006 20.4167 6.50006 21.5L15.5001 21.5" stroke="#0066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
+            width={16}
+            height={16}
+          />
+        </AutoLayout>
+      </AutoLayout>
+    )
   }
 
   return (
