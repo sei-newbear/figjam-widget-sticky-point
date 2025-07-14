@@ -6,6 +6,7 @@ const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, In
 type WidgetType = 'point' | 'counter'
 type Size = 'small' | 'medium' | 'large'
 type CounterSizeMode = 'normal' | 'compact'
+type CountTarget = 'manual' | 'section'
 
 function Widget() {
   const [widgetType, setWidgetType] = useSyncedState<WidgetType>('widgetType', 'point')
@@ -14,6 +15,7 @@ function Widget() {
   const [textColor, setTextColor] = useSyncedState<string>('textColor', '#000000')
   const [width, setWidth] = useSyncedState<number>('width', 72)
   const [counterSizeMode, setCounterSizeMode] = useSyncedState<CounterSizeMode>('counterSizeMode', 'normal')
+  const [countTarget, setCountTarget] = useSyncedState<CountTarget>('countTarget', 'manual')
 
   usePropertyMenu(
     [
@@ -104,6 +106,16 @@ function Widget() {
                 { option: 'compact', label: 'Compact' },
               ],
             },
+            {
+              itemType: 'dropdown' as const,
+              propertyName: 'countTarget',
+              tooltip: 'Count Target',
+              selectedOption: countTarget,
+              options: [
+                { option: 'manual', label: 'Manual Selection' },
+                { option: 'section', label: 'Containing Section' },
+              ],
+            },
           ]
         : []),
     ],
@@ -120,6 +132,8 @@ function Widget() {
         setTextColor(propertyValue)
       } else if (propertyName === 'counterSizeMode' && propertyValue) {
         setCounterSizeMode(propertyValue as CounterSizeMode)
+      } else if (propertyName === 'countTarget' && propertyValue) {
+        setCountTarget(propertyValue as CountTarget)
       }
     },
   )
@@ -127,7 +141,7 @@ function Widget() {
   if (widgetType === 'point') {
     return <PointWidget size={size} backgroundColor={backgroundColor} textColor={textColor} width={width} />
   } else {
-    return <CounterWidget counterSizeMode={counterSizeMode} />
+    return <CounterWidget counterSizeMode={counterSizeMode} countTarget={countTarget} />
   }
 }
 
@@ -199,7 +213,7 @@ function PointWidget({ size, backgroundColor, textColor, width }: { size: Size; 
   )
 }
 
-function CounterWidget({ counterSizeMode }: { counterSizeMode: CounterSizeMode }) {
+function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: CounterSizeMode, countTarget: CountTarget }) {
   const [total, setTotal] = useSyncedState('total', 0)
   const [pointCounts, setPointCounts] = useSyncedState<{ [point: number]: number }>('pointCounts', {})
   const [showDetails, setShowDetails] = useSyncedState('showDetails', false)
@@ -207,21 +221,32 @@ function CounterWidget({ counterSizeMode }: { counterSizeMode: CounterSizeMode }
   const widgetId = useWidgetNodeId()
 
   const calculateTotal = async () => {
-    let selection = figma.currentPage.selection
+    let selection: readonly SceneNode[]
     const widgetNode = await figma.getNodeByIdAsync(widgetId)
 
-    // 選択がない場合、またはカウンターウィジェット自身のみが選択されている場合
-    if (selection.length === 0 || (selection.length === 1 && selection[0].id === widgetId)) {
+    if (countTarget === 'section') {
       if (widgetNode && widgetNode.parent && widgetNode.parent.type === 'SECTION') {
         selection = [widgetNode.parent]
         setSelectionInfo(`Section: ${widgetNode.parent.name}`)
       } else {
-        setSelectionInfo('Not selected')
+        figma.notify('This widget is not in a section.')
+        return
       }
-    } else if (selection.length === 1 && selection[0].type === 'SECTION') {
-      setSelectionInfo(`Section: ${selection[0].name}`)
-    } else if (selection.length > 0) {
-      setSelectionInfo('Selected Multiple')
+    } else {
+      selection = figma.currentPage.selection
+      // 選択がない場合、またはカウンターウィジェット自身のみが選択されている場合
+      if (selection.length === 0 || (selection.length === 1 && selection[0].id === widgetId)) {
+        if (widgetNode && widgetNode.parent && widgetNode.parent.type === 'SECTION') {
+          selection = [widgetNode.parent]
+          setSelectionInfo(`Section: ${widgetNode.parent.name}`)
+        } else {
+          setSelectionInfo('Not selected')
+        }
+      } else if (selection.length === 1 && selection[0].type === 'SECTION') {
+        setSelectionInfo(`Section: ${selection[0].name}`)
+      } else if (selection.length > 0) {
+        setSelectionInfo('Selected Multiple')
+      }
     }
 
     const pointWidgets: WidgetNode[] = getPointWidgetsFromSceneNodes(selection);
