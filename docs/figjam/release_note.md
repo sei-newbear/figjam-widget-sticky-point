@@ -1,5 +1,17 @@
 # Release Note
 
+## v5
+Enhanced Counting Control
+
+This update gives you more explicit control over how the Counter Widget calculates totals. A new dropdown menu in the property panel allows
+you to select the counting scope.
+
+- Manual Selection: This is the default behavior, where the widget counts the points of the stickies you have manually selected.
+- Containing Section: When you place the Counter Widget inside a FigJam Section, this mode will automatically count all Sticky Points within
+   that section.
+
+This enhancement provides clearer control over the automatic section counting feature, ensuring you always know what's being counted.
+
 ## v4
 ### Counter Widget Enhancements
 
