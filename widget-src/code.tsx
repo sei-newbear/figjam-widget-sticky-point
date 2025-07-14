@@ -213,6 +213,19 @@ function PointWidget({ size, backgroundColor, textColor, width }: { size: Size; 
   )
 }
 
+const CountModeIcon = ({ countTarget }: { countTarget: CountTarget }) => {
+  const iconSrc =
+    countTarget === 'section'
+      ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 8V16C21 18.2091 19.2091 20 17 20H7C4.79086 20 3 18.2091 3 16V8C3 5.79086 4.79086 4 7 4H17C19.2091 4 21 5.79086 21 8Z" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 10H21" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.63 18.342L8.82 13.638L4.116 11.828L19.5 4.5L10.63 18.342Z" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.25 13.25L8.816 13.638" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+
+  return (
+    <AutoLayout tooltip={countTarget === 'section' ? 'Counting items in section' : 'Counting selected items'}>
+      <SVG src={iconSrc} width={16} height={16} />
+    </AutoLayout>
+  )
+}
+
 function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: CounterSizeMode, countTarget: CountTarget }) {
   const [total, setTotal] = useSyncedState('total', 0)
   const [pointCounts, setPointCounts] = useSyncedState<{ [point: number]: number }>('pointCounts', {})
@@ -289,6 +302,7 @@ function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: Coun
         stroke={'#E0E0E0'}
         strokeWidth={1}
       >
+        <CountModeIcon countTarget={countTarget} />
         <Text fontSize={18} fontWeight={700} fill={'#0066FF'}>{total}</Text>
         <Text fontSize={14} fontWeight={500} fill={'#495057'}>pts</Text>
         <AutoLayout
@@ -320,7 +334,10 @@ function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: Coun
       direction="vertical"
       width={280}
     >
-      <Text fontSize={28} fontWeight={700} fill={'#1A1A1A'}>Point Counter</Text>
+      <AutoLayout horizontalAlignItems={'center'} spacing={8}>
+        <CountModeIcon countTarget={countTarget} />
+        <Text fontSize={28} fontWeight={700} fill={'#1A1A1A'}>Point Counter</Text>
+      </AutoLayout>
       <Text fontSize={14} fill={'#6C757D'}>{selectionInfo}</Text>
       
       <AutoLayout 
