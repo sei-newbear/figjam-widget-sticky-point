@@ -9,8 +9,7 @@ Sticky Point offers a versatile way to enhance your FigJam experience by allowin
 It has two main modes:
 
 **Tagging Mode**
-In this mode, you can easily attach Point tags to any sticky note. These tags are fully customizable, allowing you to adjust their size and color to suit your needs. This is perfect for prioritizing tasks, indicating effort levels, or categorizing ideas visually.
-The widget is designed to be "stickable" to other items, and if the host item (like a sticky note) is deleted, the Point tag will be automatically removed as well.
+In this mode, you can attach fully customizable Point tags to sticky notes, adjusting their size and color to prioritize tasks, indicate effort, or categorize ideas. The widget is "stickable," meaning it attaches to objects like sticky notes and is automatically deleted if its host is removed. For greater stability, you can enable the **Grouping** toggle in the property panel. This locks the Point Widget to its host, treating them as a single unit and preventing unexpected movement when using FigJam's alignment and distribution tools.
 
 **Counting Mode**
 When you need to summarize your points, switch to this mode. Simply select the area with the Point tags you want to count, then click the "Count" button. Sticky Point will instantly calculate and display the total of all Point tags. For a deeper analysis, you can click 'Show details' to see a breakdown of the count by point value. This provides quick insights and helps you make informed decisions.
