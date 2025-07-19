@@ -1,7 +1,7 @@
 // This is a widget that can be either a "Point" counter or a "Counter" that sums up all points.
 
 const { widget } = figma
-const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, Input, useWidgetNodeId } = widget
+const { useSyncedState, usePropertyMenu, AutoLayout, Text, SVG, useStickable, Input, useWidgetNodeId, useEffect } = widget
 
 type WidgetType = 'point' | 'counter'
 type Size = 'small' | 'medium' | 'large'
@@ -16,6 +16,7 @@ function Widget() {
   const [width, setWidth] = useSyncedState<number>('width', 72)
   const [counterSizeMode, setCounterSizeMode] = useSyncedState<CounterSizeMode>('counterSizeMode', 'normal')
   const [countTarget, setCountTarget] = useSyncedState<CountTarget>('countTarget', 'manual')
+  const [groupingEnabled, setGroupingEnabled] = useSyncedState<boolean>('groupingEnabled', false)
 
   usePropertyMenu(
     [
@@ -91,6 +92,12 @@ function Widget() {
                 { option: '#FF0000', tooltip: 'Red Font' },
               ],
             },
+            {
+              itemType: 'toggle' as const,
+              propertyName: 'groupingEnabled',
+              tooltip: 'Enable auto grouping',
+              isToggled: groupingEnabled,
+            },
           ]
         : []),
       // Counter widget用のプロパティ
@@ -134,30 +141,87 @@ function Widget() {
         setCounterSizeMode(propertyValue as CounterSizeMode)
       } else if (propertyName === 'countTarget' && propertyValue) {
         setCountTarget(propertyValue as CountTarget)
+      } else if (propertyName === 'groupingEnabled') {
+        setGroupingEnabled(!groupingEnabled)
       }
     },
   )
 
   if (widgetType === 'point') {
-    return <PointWidget size={size} backgroundColor={backgroundColor} textColor={textColor} width={width} />
+    return <PointWidget size={size} backgroundColor={backgroundColor} textColor={textColor} width={width} groupingEnabled={groupingEnabled} />
   } else {
     return <CounterWidget counterSizeMode={counterSizeMode} countTarget={countTarget} />
   }
 }
 
-function PointWidget({ size, backgroundColor, textColor, width }: { size: Size; backgroundColor: string; textColor: string; width: number }) {
+function PointWidget({ size, backgroundColor, textColor, width, groupingEnabled }: { size: Size; backgroundColor: string; textColor: string; width: number; groupingEnabled: boolean }) {
   const [point, setPoint] = useSyncedState<number>('point', 0)
+  const [beforeGroupingEnabled, setBeforeGroupingEnabled] = useSyncedState<boolean>('beforeGroupingEnabled', false)
   const widgetNodId = useWidgetNodeId()
-  useStickable(async (e: WidgetStuckEvent) => {
-    const oldHostId = e.oldHostId
-    if (oldHostId) {
-      const oldHost = await figma.getNodeByIdAsync(oldHostId)
-      if(!oldHost){
-        const widgetNode = await figma.getNodeByIdAsync(widgetNodId)
-        if(widgetNode){
-          widgetNode.remove()
+  function unGroupNode(node: BaseNode) {
+    if (node.parent?.type === "GROUP") {
+      figma.ungroup(node.parent);
+    }
+  }
+
+  useStickable(async (e: WidgetStuckEvent) => {     
+    async function getNode(id: string) {
+      return await figma.getNodeByIdAsync(id);
+    }
+
+    async function handleOldHost(oldHostId: string) {
+      const widgetNode = await getNode(widgetNodId);
+      if (!widgetNode) return;
+
+      const oldHost = await getNode(oldHostId);
+      if (!oldHost) {
+        widgetNode.remove();
+        return;
+      }
+
+      if (groupingEnabled) {
+        unGroupNode(widgetNode);
+      }
+    }
+
+    async function handleNewHost(newHostId: string) {
+      if (!groupingEnabled) return;
+
+      const newHost = await getNode(newHostId);
+      const widgetNode = await getNode(widgetNodId);
+                  
+      if (newHost && widgetNode) {
+        const newHostParent = newHost.parent;
+        if (newHostParent) {
+          figma.group([newHost, widgetNode], newHostParent);
         }
       }
+    }
+
+    if (e.oldHostId) {
+      await handleOldHost(e.oldHostId);
+    }
+    if (e.newHostId) {
+      await handleNewHost(e.newHostId);
+    }
+  })
+
+  useEffect(() => {
+    if(beforeGroupingEnabled === groupingEnabled) return;
+    setBeforeGroupingEnabled(groupingEnabled)
+
+    if(groupingEnabled){
+      figma.getNodeByIdAsync(widgetNodId).then(node => {
+        if(node?.type === 'WIDGET' && node.stuckTo && node.parent){
+          figma.group([node.stuckTo, node], node.parent);
+        }
+      })
+    } else {
+      figma.getNodeByIdAsync(widgetNodId).then(node => {
+        if(node?.parent){
+          unGroupNode(node);
+        }
+      })
     }
   })
 
