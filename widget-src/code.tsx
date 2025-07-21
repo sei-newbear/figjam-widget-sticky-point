@@ -503,13 +503,13 @@ function getPointWidgets(node: SceneNode): WidgetNode[] {
   }
 
   // セクションの場合、その中のすべての子要素を再帰的に処理
-  if (node.type === 'SECTION') {
+  if ("children" in node) {
     node.children.forEach(child => {
       pointWidgets.push(...getPointWidgets(child));
     });
   }
 
-  if (node.type === 'STICKY') {
+  if ("stuckNodes" in node) {
     node.stuckNodes.forEach(stuckNode => {
       pointWidgets.push(...getPointWidgets(stuckNode));
     })
