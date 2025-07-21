@@ -1,5 +1,13 @@
 # Release Note
 
+## v8
+Improved Counter Reliability
+
+This update enhances the reliability of the Counter Widget for more accurate counting.
+
+・Refactored the logic for detecting Point Widgets, making it more robust.
+・Improves accuracy for both "Manual Selection" and "Containing Section" modes, even with nested items.
+
 ## v7
 Enhanced Widget Stability with Grouping Feature
 
