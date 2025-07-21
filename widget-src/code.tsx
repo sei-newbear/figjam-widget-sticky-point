@@ -502,7 +502,6 @@ function getPointWidgets(node: SceneNode): WidgetNode[] {
     pointWidgets.push(node);
   }
 
-  // セクションの場合、その中のすべての子要素を再帰的に処理
   if ("children" in node) {
     node.children.forEach(child => {
       pointWidgets.push(...getPointWidgets(child));
