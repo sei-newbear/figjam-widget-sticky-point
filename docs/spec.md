@@ -124,7 +124,12 @@ npm run tsc
 - `package.json`: プロジェクトの依存関係、スクリプト、開発ツール設定を定義します。
 - `README.md`: プロジェクトの概要とセットアップ手順を提供します。
 - `widget-src/`: ウィジェットのソースコードを格納します。
-    - `code.tsx`: ウィジェットのメインロジックとUIコンポーネントが含まれます。
+    - `code.tsx`: ウィジェットのメインロジック。`PointWidget`と`CounterWidget`を呼び出し、ウィジェットの種類を切り替えるロジックを格納します。
+    - `components/`: UIコンポーネントを格納します。
+        - `PointWidget.tsx`: タグ付けモード（Point Widget）のUIとロジックを定義します。
+        - `CounterWidget.tsx`: カウントモード（Counter Tool）のUIとロジックを定義します。
+    - `types.ts`: ウィジェット全体で使用されるTypeScriptの型定義を格納します。
+    - `utils.ts`: 共通のユーティリティ関数を格納します。
     - `tsconfig.json`: TypeScriptのコンパイル設定を定義します。
 - `dist/`: ビルドされたJavaScriptファイルが格納されます。
     - `code.js`: `widget-src/code.tsx`からビルドされた最終的なウィジェットコードです。
