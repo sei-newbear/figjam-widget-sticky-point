@@ -124,12 +124,16 @@ npm run tsc
 - `package.json`: プロジェクトの依存関係、スクリプト、開発ツール設定を定義します。
 - `README.md`: プロジェクトの概要とセットアップ手順を提供します。
 - `widget-src/`: ウィジェットのソースコードを格納します。
-    - `code.tsx`: ウィジェットのメインロジック。`PointWidget`と`CounterWidget`を呼び出し、ウィジェットの種類を切り替えるロジックを格納します。
-    - `components/`: UIコンポーネントを格納します。
-        - `PointWidget.tsx`: タグ付けモード（Point Widget）のUIとロジックを定義します。
-        - `CounterWidget.tsx`: カウントモード（Counter Tool）のUIとロジックを定義します。
+    - `code.tsx`: ウィジェットのルートコンポーネント。State管理の起点となり、`PointWidget`と`CounterWidget`のどちらを表示するかを決定します。
+    - `components/`: UI（ビュー）の責務を持つコンポーネントを格納します。
+        - `PointWidget.tsx`: タグ付けモード（Point Widget）のUIを定義します。
+        - `CounterWidget.tsx`: カウントモード（Counter Tool）のUIを定義します。
+    - `hooks/`: State管理や副作用を含むロジック（カスタムフック）を格納します。
+        - `useWidgetPropertyMenu.ts`: Figmaのプロパティメニューの構築とイベント処理を担当するフックです。
+        - `usePointWidget.ts`: `PointWidget`の追従機能やグループ化など、ロジック部分を担当するフックです。
+        - `useCounterWidget.ts`: `CounterWidget`のポイント計算やState管理など、ロジック部分を担当するフックです。
     - `types.ts`: ウィジェット全体で使用されるTypeScriptの型定義を格納します。
-    - `utils.ts`: 共通のユーティリティ関数を格納します。
+    - `utils.ts`: 特定のコンポーネントやフックに依存しない、汎用的なユーティリティ関数を格納します。
     - `tsconfig.json`: TypeScriptのコンパイル設定を定義します。
 - `dist/`: ビルドされたJavaScriptファイルが格納されます。
     - `code.js`: `widget-src/code.tsx`からビルドされた最終的なウィジェットコードです。
