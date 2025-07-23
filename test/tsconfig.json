@@ -1,0 +1,12 @@
+{
+  "extends": "../widget-src/tsconfig.json", // 親の設定を継承
+  "compilerOptions": {
+    "module": "commonjs", // JestはCommonJSモジュールを期待する
+    "types": ["jest", "node", "dom"] // Jest, Node.js, DOMの型定義を読み込む
+  },
+  "include": [
+    "**/*.ts", // testディレクトリ内のすべてのtsファイル
+    "../widget-src/**/*.ts", // ソースコードの型も必要
+    "../node_modules/@figma/plugin-typings/index.d.ts" // Figmaの型定義
+  ]
+}
