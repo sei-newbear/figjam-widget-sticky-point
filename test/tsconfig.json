@@ -5,8 +5,9 @@
     "types": ["jest", "node"]
   },
   "include": [
-    "**/*.ts",
+    "./**/*.ts",
     "../widget-src/**/*.ts",
+    "../widget-src/**/*.tsx",
     "../node_modules/@figma/plugin-typings/index.d.ts"
   ]
 }
