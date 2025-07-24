@@ -3,27 +3,7 @@ const { widget } = figma
 const { useSyncedState, useWidgetNodeId } = widget
 import { CountTarget } from '../types'
 import { getPointWidgetsFromSceneNodes } from '../utils'
-
-// 純粋な計算ロジックを分離
-export const calculatePoints = (pointWidgets: WidgetNode[]) => {
-  if (pointWidgets.length === 0) {
-    return { total: 0, pointCounts: {} }
-  }
-
-  const points = pointWidgets.map(widget => {
-    const point = widget.widgetSyncedState['point']
-    return typeof point === 'number' ? point : 0
-  })
-
-  const total = points.reduce((acc, curr) => acc + curr, 0)
-
-  const pointCounts = points.reduce<{ [point: number]: number }>((acc, point) => {
-    acc[point] = (acc[point] || 0) + 1
-    return acc
-  }, {})
-
-  return { total, pointCounts }
-}
+import { calculatePoints } from '../logic/calculation'
 
 export function useCounterWidget(countTarget: CountTarget) {
   const [total, setTotal] = useSyncedState('total', 0)
