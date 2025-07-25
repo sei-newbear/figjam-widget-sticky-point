@@ -11,7 +11,7 @@
     "tsc": "tsc --noEmit -p widget-src/tsconfig.json"
   },
   "author": "",
-  "license": "",
+  "license": "MIT",
   "devDependencies": {
     "@figma/eslint-plugin-figma-plugins": "*",
     "@figma/plugin-typings": "*",
