@@ -299,6 +299,7 @@ function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: Coun
   const [pointCounts, setPointCounts] = useSyncedState<{ [point: number]: number }>('pointCounts', {})
   const [showDetails, setShowDetails] = useSyncedState('showDetails', false)
   const [selectionInfo, setSelectionInfo] = useSyncedState('selectionInfo', 'Not selected')
+  const [selectedSectionId, setSelectedSectionId] = useSyncedState('selectedSectionId', '')
   const widgetId = useWidgetNodeId()
 
   const calculateTotal = async () => {
@@ -358,6 +359,54 @@ function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: Coun
     setPointCounts(counts)
   }
 
+  async function watchPointCount(): Promise<void> {
+    const widgetNode = await figma.getNodeByIdAsync(widgetId)
+    if(widgetNode?.type === "WIDGET"){
+      const section = getParentSectionNode(widgetNode)
+      if(section){
+        setSelectedSectionId(section.id)
+        return new Promise(() => {
+          figma.showUI("", { visible: false });
+        })
+      }else{
+        figma.notify("Not in section.")
+      }
+    }
+  }
+
+  function getParentSectionNode(node: BaseNode): SectionNode | undefined {
+    if(node.type === "SECTION") return node
+
+    if(node.type === "PAGE") return undefined
+    
+    if ("parent" in node && node.parent) {
+      return getParentSectionNode(node.parent)
+    }
+
+    return undefined
+  }
+
+  function onNodeChange(event: NodeChangeEvent) {
+    const watchingTargetTypes = ["SECTION", "GROUP", "WIDGET"]
+    console.log("onNodeChange", event)
+    const filteredTypeTargets = event.nodeChanges.filter(c => watchingTargetTypes.includes(c.node.type))
+    console.log({filteredTypeTargets});
+    
+    if(!filteredTypeTargets.length) return
+
+    calculateTotal()
+  }
+
+  useEffect(() => {
+    console.log("useEffect");
+    figma.currentPage.on("nodechange", onNodeChange)
+
+    return function cleanup() {
+      console.log("cleanup");
+      figma.currentPage.on("nodechange", onNodeChange)
+    }
+  })
+
   if (counterSizeMode === 'compact') {
     return (
       <AutoLayout
@@ -384,6 +433,9 @@ function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: Coun
             width={16}
             height={16}
           />
+        </AutoLayout>
+        <AutoLayout onClick={watchPointCount}>
+          <Text>Watching Section</Text>
         </AutoLayout>
       </AutoLayout>
     )
@@ -502,7 +554,6 @@ function getPointWidgets(node: SceneNode): WidgetNode[] {
     pointWidgets.push(node);
   }
 
-  // セクションの場合、その中のすべての子要素を再帰的に処理
   if ("children" in node) {
     node.children.forEach(child => {
       pointWidgets.push(...getPointWidgets(child));
