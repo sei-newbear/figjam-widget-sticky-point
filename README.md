@@ -1,5 +1,7 @@
 # Sticky Point Widget
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 これは、FigJam上で付箋にポイントを付け、その合計をカウントするためのウィジェットです。
 
 ![Sticky Point Widget](images/sticky-point-icon.JPG)
@@ -9,6 +11,12 @@
 - **ポイントタグ付け**: 付箋や図形にポイント（数値）をタグとして付けられます。
 - **自動集計**: 範囲内のポイントを自動で集計し、合計値を表示します。
 - **カスタマイズ**: タグの色やサイズを自由に変更できます。
+
+## インストール
+
+以下のFigma Communityページからウィジェットをインストールしてください。
+
+[https://www.figma.com/community/widget/1523141515156841697](https://www.figma.com/community/widget/1523141515156841697)
 
 ## 使い方
 
@@ -22,23 +30,10 @@
 
 ## 開発者向け情報
 
-### セットアップ
-
-このウィジェットはTypeScriptとNPMを使用しています。
-
-1.  **依存関係のインストール**:
-    ```bash
-    npm install
-    ```
-
-2.  **ビルド**:
-    ```bash
-    npm run build
-    ```
-
-3.  **開発モード**:
-    ```bash
-    npm run watch
-    ```
+ローカルでウィジェットを実行する方法については、[Figmaの公式ドキュメント](https://www.figma.com/widget-docs/setup-guide/)を参照してください。
 
 より詳細な開発者向けの情報は、`docs/DEVELOPER.md` を参照してください。
+
+## ライセンス
+
+このプロジェクトはMITライセンスです。詳細は `LICENSE` ファイルを確認してください。
