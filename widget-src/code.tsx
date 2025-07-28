@@ -5,6 +5,7 @@ const { useSyncedState } = widget
 import { WidgetType, Size, CounterSizeMode, CountTarget } from './types'
 import { PointWidget } from './components/PointWidget'
 import { CounterWidget } from './components/CounterWidget'
+import { OrganizerWidget } from './components/OrganizerWidget'
 import { useWidgetPropertyMenu } from './hooks/useWidgetPropertyMenu'
 
 function Widget() {
@@ -38,8 +39,10 @@ function Widget() {
 
   if (widgetType === 'point') {
     return <PointWidget size={size} backgroundColor={backgroundColor} textColor={textColor} width={width} groupingEnabled={groupingEnabled} />
-  } else {
+  } else if (widgetType === 'counter') {
     return <CounterWidget counterSizeMode={counterSizeMode} countTarget={countTarget} />
+  } else if (widgetType === 'organizer') {
+    return <OrganizerWidget />
   }
 }
 

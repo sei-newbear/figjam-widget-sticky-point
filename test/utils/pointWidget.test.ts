@@ -1,5 +1,5 @@
 // widget-src/utils.test.ts
-import { getPointWidgetsFromSceneNodes } from '../widget-src/utils';
+import { getPointWidgetsFromSceneNodes } from '../../widget-src/utils/pointWidget';
 
 describe('getPointWidgetsFromSceneNodes', () => {
   // テストの前にfigma.widgetIdをこのテストケース用に設定

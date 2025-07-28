@@ -1,4 +1,5 @@
 
+import { groupWidget, ungroupWidget } from '../utils/grouping';
 const { widget } = figma
 const { useSyncedState, useStickable, useWidgetNodeId, useEffect } = widget
 
@@ -12,27 +13,6 @@ export function usePointWidget(groupingEnabled: boolean) {
     }
 
     return null;
-  }
-  function unGroupNode(node: BaseNode) {
-    const parent = node.parent
-    
-    if (parent?.type !== "GROUP") return;
-    // グループの子要素がウィジェットとそれ以外のNodeが1つずつではない場合のみグループを解除する
-    // グループの子要素が3つ以上ある場合、この機能でグループ化したのか、元々グループ化していたのか判断つかないため、解除せずそのままにする
-    if (parent.children.length !== 2) return;
-
-    figma.ungroup(parent);
-  }
-
-  function groupWidgetNode(widgetNode: WidgetNode) {
-    const widgetParent = widgetNode.parent
-    if(!widgetParent) return
-    if(widgetParent.type === "GROUP") return;
-    
-    const widgetStuckTo = widgetNode.stuckTo
-    if(!widgetStuckTo) return
-
-    figma.group([widgetNode, widgetStuckTo], widgetNode.parent);
   }
 
   useStickable(async (e: WidgetStuckEvent) => {     
@@ -51,7 +31,7 @@ export function usePointWidget(groupingEnabled: boolean) {
       }
 
       if (groupingEnabled) {
-        unGroupNode(widgetNode);
+        ungroupWidget(widgetNode);
       }
     }
 
@@ -60,7 +40,7 @@ export function usePointWidget(groupingEnabled: boolean) {
 
       const widgetNode = await getWidgetNode();                  
       if (widgetNode) {
-        groupWidgetNode(widgetNode);
+        groupWidget(widgetNode);
       }
     }
 
@@ -79,13 +59,13 @@ export function usePointWidget(groupingEnabled: boolean) {
     if(groupingEnabled){
       getWidgetNode().then(node => {
         if(node){
-          groupWidgetNode(node);
+          groupWidget(node);
         }
       })
     } else {
       getWidgetNode().then(node => {
         if(node){
-          unGroupNode(node);
+          ungroupWidget(node);
         }
       })
     }

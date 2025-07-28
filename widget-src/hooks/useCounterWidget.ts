@@ -2,7 +2,7 @@
 const { widget } = figma
 const { useSyncedState, useWidgetNodeId } = widget
 import { CountTarget } from '../types'
-import { getPointWidgetsFromSceneNodes } from '../utils'
+import { getPointWidgetsFromSceneNodes } from '../utils/pointWidget'
 import { calculatePoints } from '../logic/calculation'
 
 export function useCounterWidget(countTarget: CountTarget) {

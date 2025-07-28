@@ -20,10 +20,12 @@
     - `components/`: UI（ビュー）の責務を持つコンポーネントを格納します。
         - `PointWidget.tsx`: タグ付けモード（Point Widget）のUIを定義します。
         - `CounterWidget.tsx`: カウントモード（Counter Tool）のUIを定義します。
+        - `OrganizerWidget.tsx`: 整理モード（Organizer Tool）のUIを定義します。
     - `hooks/`: State管理や副作用を含むロジック（カスタムフック）を格納します。
         - `useWidgetPropertyMenu.ts`: Figmaのプロパティメニューの構築とイベント処理を担当するフックです。
         - `usePointWidget.ts`: `PointWidget`の追従機能やグループ化など、ロジック部分を担当するフックです。
         - `useCounterWidget.ts`: `CounterWidget`のポイント計算やState管理など、ロジック部分を担当するフックです。
+        - `useOrganizerWidget.ts`: `OrganizerWidget`のグループ化/グループ解除ロジックを担当するフックです。
     - `logic/`: UIやFigma APIの副作用から独立した、純粋なビジネスロジックを格納します。
         - `calculation.ts`: ポイントの合計値や内訳を計算するロジックを担当します。
     - `types.ts`: ウィジェット全体で使用されるTypeScriptの型定義を格納します。
@@ -60,6 +62,15 @@ Sticky Pointウィジェットは、プロパティメニューから `widgetTyp
         1. 指定された計数対象の中から、`widgetType: 'point'` のウィジェットをすべて探し出します。
         2. 見つかった各Point Widgetの `point` の値を合計し、`total` stateに保存します。
         3. 同時に、ポイントの値ごとの個数を `pointCounts` stateに集計します。
+
+#### 3.1.3. 整理モード (Organizer Tool)
+
+選択されたPoint Widgetをグループ化またはグループ解除するためのツールです。ホストにアタッチされたPoint Widgetが対象となり、Point Widgetの自動グループ化機能と同じロジックで処理されます。
+
+- **機能**:
+    - **グループ化**: 選択されたPoint Widgetをグループ化します。
+    - **グループ解除**: 選択されたPoint Widgetのグループを解除します。
+    - **通知**: 操作完了後に通知を表示します。
 
 ## 4. 開発手順
 
