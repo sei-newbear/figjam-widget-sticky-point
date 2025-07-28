@@ -1,5 +1,15 @@
 # Release Note
 
+## v9
+New Point Organizer and Enhanced Grouping
+
+This release introduces the "Point Organizer" tool for easier management of multiple points and improves the existing auto-grouping feature.
+
+- New - Point Organizer Tool: You can now select "Point Organizer" from the widget menu. This tool allows you to group or ungroup all selected Point Widgets at once, making it easier to manage them.
+- Update - Auto-Grouping Behavior: The auto-grouping feature is now more precise. It will no longer ungroup a Point Widget if the group contains other objects besides the widget and its host. This prevents accidental ungrouping of complex elements.
+- Update - Grouping Logic: Improved the grouping logic to prevent the creation of nested groups.
+- We've also refactored our code to improve stability.
+
 ## v8
 Improved Counter Reliability
 
