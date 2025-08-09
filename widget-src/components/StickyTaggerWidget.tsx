@@ -122,6 +122,33 @@ export function StickyTaggerWidget() {
     figma.notify(notificationMessage);
   };
 
+  const handleBulkDelete = () => {
+    const selection = figma.currentPage.selection;
+    if (selection.length === 0) {
+      figma.notify('Please make a selection first.');
+      return;
+    }
+
+    const pointWidgetsToDelete = getPointWidgetsFromSceneNodes(selection);
+
+    if (pointWidgetsToDelete.length === 0) {
+      figma.notify("No 'Point' widgets found in the selection.");
+      return;
+    }
+
+    let deleteCount = 0;
+    for (const widget of pointWidgetsToDelete) {
+      if (!widget.removed) {
+        widget.remove();
+        deleteCount++;
+      }
+    }
+
+    if (deleteCount > 0) {
+      figma.notify(`Successfully deleted ${deleteCount} 'Point' widget(s).`);
+    }
+  };
+
   const tagToDelete = tagIdToDelete ? tags.find(tag => tag.id === tagIdToDelete) : null;
 
   return (
@@ -229,6 +256,23 @@ export function StickyTaggerWidget() {
       ) : (
         <Text fontSize={14} fill={'#6C757D'}>No templates registered yet.</Text>
       )}
+
+      {/* Separator */}
+      <AutoLayout height={1} width="fill-parent" fill={'#E0E0E0'} />
+
+      {/* Bulk Delete Button */}
+      <AutoLayout
+        onClick={handleBulkDelete}
+        fill={'#DC3545'}
+        cornerRadius={8}
+        padding={{ horizontal: 12, vertical: 6 }}
+        horizontalAlignItems="center"
+        verticalAlignItems="center"
+        hoverStyle={{ opacity: 0.9 }}
+        tooltip="Deletes all 'Point' widgets found within the current selection."
+      >
+        <Text fill={'#FFFFFF'} fontSize={14} fontWeight={600}>Delete Tags from Selection</Text>
+      </AutoLayout>
 
       {showConfirmDelete && (
         <AutoLayout
