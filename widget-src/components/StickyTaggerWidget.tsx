@@ -1,6 +1,7 @@
 const { widget } = figma;
 const { AutoLayout, Text } = widget;
 const { useSyncedState } = widget;
+import { getPointWidgetsFromSceneNodes } from '../utils/pointWidget';
 
 export function StickyTaggerWidget() {
   const [tags, setTags] = useSyncedState<Array<{ id: string, label: string, templateWidgetId: string, point: number }>>('stickyTaggerTags', []);
@@ -65,39 +66,60 @@ export function StickyTaggerWidget() {
   const handleRegisterTemplate = async () => {
     const selection = figma.currentPage.selection;
     if (selection.length === 0) {
-      figma.notify('Please select a widget to register as a template.');
-      return;
-    }
-    if (selection.length > 1) {
-      figma.notify('Only one widget can be registered as a template.');
+      figma.notify('Please select widgets or a section to register as a template.');
       return;
     }
 
-    const selectedNode = selection[0];
+    const widgetsToRegister = getPointWidgetsFromSceneNodes(selection);
 
-    // 選択されたノードがウィジェットであるかを確認
-    if (selectedNode.type !== 'WIDGET') {
-      figma.notify('The selected node is not a widget.');
+    if (widgetsToRegister.length === 0) {
+      figma.notify('No widgets found in the selection. Please select widgets to register.');
       return;
     }
 
-    // 既に同じテンプレートが登録されていないかチェック
-    if (tags.some(tag => tag.templateWidgetId === selectedNode.id)) {
-      figma.notify('This widget is already registered as a template.');
-      return;
+    const newTags: { id: string; label: string; templateWidgetId: string; point: number; }[] = [];
+    let alreadyRegisteredCount = 0;
+
+    for (const widget of widgetsToRegister) {
+      // 既に同じテンプレートが登録されていないかチェック
+      if (tags.some(tag => tag.templateWidgetId === widget.id)) {
+        alreadyRegisteredCount++;
+        continue;
+      }
+
+      const label = widget.name || 'Unnamed Tag';
+      // pointの取得方法を安全にする
+      const point = (widget.widgetSyncedState.point && typeof widget.widgetSyncedState.point === 'number') 
+                      ? widget.widgetSyncedState.point 
+                      : 0;
+
+      const newTag = {
+        id: `tag-${widget.id}-${Date.now()}`, // IDが一意になるようにwidget.idも加える
+        label: label,
+        templateWidgetId: widget.id,
+        point: point,
+      };
+      newTags.push(newTag);
     }
 
-    const label = selectedNode.name || 'Unnamed Tag';
-    const point = selectedNode.widgetSyncedState.point as number || 0;
+    if (newTags.length > 0) {
+      setTags([...tags, ...newTags]);
+    }
+    
+    // 通知メッセージを作成
+    let notificationMessage = '';
+    if (newTags.length > 0) {
+        notificationMessage += `${newTags.length} new template(s) registered.`;
+    }
+    if (alreadyRegisteredCount > 0) {
+        if (notificationMessage) notificationMessage += ' ';
+        notificationMessage += `${alreadyRegisteredCount} template(s) were already registered.`;
+    }
+    if (!notificationMessage) {
+        notificationMessage = 'Selected widget(s) are already registered.';
+    }
 
-    const newTag = {
-      id: `tag-${Date.now()}`,
-      label: label,
-      templateWidgetId: selectedNode.id,
-      point: point,
-    };
-    setTags([...tags, newTag]);
-    figma.notify(`"${label}" has been registered as a template.`);
+    figma.notify(notificationMessage);
   };
 
   const tagToDeleteLabel = tagIdToDelete ? tags.find(tag => tag.id === tagIdToDelete)?.label : '';
@@ -138,7 +160,7 @@ export function StickyTaggerWidget() {
 
       {tags.length > 0 ? (
         <AutoLayout direction="vertical" spacing={8}>
-          {tags.map((tag) => (
+          {[...tags].sort((a, b) => a.point - b.point).map((tag) => (
             <AutoLayout
               key={tag.id}
               direction="horizontal"
