@@ -61,6 +61,12 @@ export function StickyTaggerWidget() {
       return;
     }
 
+    // 既に同じテンプレートが登録されていないかチェック
+    if (tags.some(tag => tag.templateWidgetId === selectedNode.id)) {
+      figma.notify('このウィジェットは既にテンプレートとして登録されています。');
+      return;
+    }
+
     const label = selectedNode.name || 'Unnamed Tag';
     const point = selectedNode.widgetSyncedState.point as number || 0;
 
