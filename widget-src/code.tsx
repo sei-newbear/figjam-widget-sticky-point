@@ -6,6 +6,7 @@ import { WidgetType, Size, CounterSizeMode, CountTarget } from './types'
 import { PointWidget } from './components/PointWidget'
 import { CounterWidget } from './components/CounterWidget'
 import { OrganizerWidget } from './components/OrganizerWidget'
+import { StickyTaggerWidget } from './components/StickyTaggerWidget'
 import { useWidgetPropertyMenu } from './hooks/useWidgetPropertyMenu'
 
 function Widget() {
@@ -43,7 +44,10 @@ function Widget() {
     return <CounterWidget counterSizeMode={counterSizeMode} countTarget={countTarget} />
   } else if (widgetType === 'organizer') {
     return <OrganizerWidget />
+  } else if (widgetType === 'stickyTagger') {
+    return <StickyTaggerWidget />
   }
 }
+
 
 widget.register(Widget)

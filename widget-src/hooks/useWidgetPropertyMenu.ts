@@ -32,6 +32,7 @@ export function useWidgetPropertyMenu(
           { option: 'point', label: 'Point' },
           { option: 'counter', label: 'Counter Tool' },
           { option: 'organizer', label: 'Point Organizer' },
+          { option: 'stickyTagger', label: 'Sticky Tagger' },
         ],
       },
       // Point widget用のプロパティ
