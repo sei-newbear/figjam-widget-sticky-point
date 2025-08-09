@@ -122,7 +122,7 @@ export function StickyTaggerWidget() {
     figma.notify(notificationMessage);
   };
 
-  const tagToDeleteLabel = tagIdToDelete ? tags.find(tag => tag.id === tagIdToDelete)?.label : '';
+  const tagToDelete = tagIdToDelete ? tags.find(tag => tag.id === tagIdToDelete) : null;
 
   return (
     <AutoLayout
@@ -216,7 +216,7 @@ export function StickyTaggerWidget() {
             width={280}
           >
             <Text fontSize={18} fontWeight={700}>Confirm Deletion</Text>
-            <Text fontSize={14} width={240} horizontalAlignText="center">{`Are you sure you want to delete "${tagToDeleteLabel}"?`}</Text>
+            <Text fontSize={14} width={240} horizontalAlignText="center">{tagToDelete ? `Are you sure you want to delete "${tagToDelete.label}" (${tagToDelete.point} pts)?` : ''}</Text>
             <AutoLayout direction="horizontal" spacing={12}>
               <AutoLayout
                 onClick={confirmDelete}
