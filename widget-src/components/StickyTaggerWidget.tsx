@@ -145,21 +145,43 @@ export function StickyTaggerWidget() {
   const confirmBulkDelete = () => {
     const selection = figma.currentPage.selection;
     const pointWidgetsToDelete = getPointWidgetsFromSceneNodes(selection);
-    
+
+    const templateIds = new Set(tags.map(tag => tag.templateWidgetId));
+
     let deleteCount = 0;
+    let skippedCount = 0;
+
     for (const widget of pointWidgetsToDelete) {
+      if (templateIds.has(widget.id)) {
+        skippedCount++;
+        continue;
+      }
+
       if (!widget.removed) {
         widget.remove();
         deleteCount++;
       }
     }
 
+    let message = '';
     if (deleteCount > 0) {
-      figma.notify(`Successfully deleted ${deleteCount} 'Point' widget(s).`);
+      message += `Successfully deleted ${deleteCount} 'Point' widget(s).`;
+    }
+    if (skippedCount > 0) {
+      if (message) {
+        message += ' ';
+      }
+      message += `Skipped ${skippedCount} widget(s) used as templates.`;
+    }
+
+    if (message) {
+      figma.notify(message);
+    } else if (pointWidgetsToDelete.length > 0) {
+      figma.notify('No widgets to delete. Selected items are registered templates.');
     }
     
     setShowConfirmBulkDelete(false);
-    setWidgetsToDeleteCount(0); // Reset count
+    setWidgetsToDeleteCount(0);
   };
 
   const cancelBulkDelete = () => {
