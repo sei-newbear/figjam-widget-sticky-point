@@ -139,24 +139,59 @@ export function StickyTaggerWidget() {
       positioning="auto"
     >
       <Text fontSize={28} fontWeight={700} fill={'#1A1A1A'}>Sticky Tagger</Text>
-      <Text fontSize={14} fill={'#6C757D'}>Apply tags to selected sticky notes</Text>
 
-      <AutoLayout
-        onClick={handleRegisterTemplate}
-        fill="#28A745"
-        cornerRadius={8}
-        padding={10}
-        horizontalAlignItems="center"
-        verticalAlignItems="center"
-        hoverStyle={{ opacity: 0.9 }}
-        width={160}
-        height={32}
-        tooltip="Click to add the selected widget to your list of tag templates. Ensure only one widget is selected."
-      >
-        <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>Add Template</Text>
+      <AutoLayout direction="vertical" spacing={12} width="fill-parent" horizontalAlignItems="center">
+
+        {/* --- Template Management --- */}
+        <AutoLayout spacing={8} verticalAlignItems="center">
+          <AutoLayout
+            onClick={handleRegisterTemplate}
+            fill="#28A745"
+            cornerRadius={8}
+            padding={10}
+            horizontalAlignItems="center"
+            verticalAlignItems="center"
+            hoverStyle={{ opacity: 0.9 }}
+            width={160}
+            height={32}
+          >
+            <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>Add Template</Text>
+          </AutoLayout>
+          <AutoLayout
+            tooltip="Select a widget and click 'Add Template'. You can register multiple widgets at once by selecting them or the section they are in."
+            width={16}
+            height={16}
+            cornerRadius={999}
+            stroke={'#6C757D'}
+            strokeWidth={1}
+            horizontalAlignItems="center"
+            verticalAlignItems="center"
+            hoverStyle={{ stroke: '#1A1A1A' }}
+          >
+            <Text fontSize={10} fontWeight={700} fill={'#6C757D'} hoverStyle={{ fill: '#1A1A1A' }}>i</Text>
+          </AutoLayout>
+        </AutoLayout>
+
+        {/* --- Apply Tags --- */}
+        <AutoLayout direction="vertical" spacing={4} width="fill-parent">
+          <AutoLayout spacing={8} verticalAlignItems="center">
+            <Text fontSize={16} fontWeight={700}>Tag Palette</Text>
+            <AutoLayout
+              tooltip="Select one or more sticky notes, then click a tag to apply."
+              width={16}
+              height={16}
+              cornerRadius={999}
+              stroke={'#6C757D'}
+              strokeWidth={1}
+              horizontalAlignItems="center"
+              verticalAlignItems="center"
+              hoverStyle={{ stroke: '#1A1A1A' }}
+            >
+              <Text fontSize={10} fontWeight={700} fill={'#6C757D'} hoverStyle={{ fill: '#1A1A1A' }}>i</Text>
+            </AutoLayout>
+          </AutoLayout>
+        </AutoLayout>
       </AutoLayout>
-
-      <AutoLayout height={10} />
 
       {tags.length > 0 ? (
         <AutoLayout direction="vertical" spacing={8}>
