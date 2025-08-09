@@ -143,22 +143,20 @@ export function StickyTaggerWidget() {
       <AutoLayout direction="vertical" spacing={12} width="fill-parent" horizontalAlignItems="center">
 
         {/* --- Template Management --- */}
-        <AutoLayout spacing={8} verticalAlignItems="center">
+        <AutoLayout spacing={8} verticalAlignItems="center" width="fill-parent" horizontalAlignItems="end">
           <AutoLayout
             onClick={handleRegisterTemplate}
             fill="#28A745"
             cornerRadius={8}
-            padding={10}
+            padding={{ horizontal: 12, vertical: 6 }}
             horizontalAlignItems="center"
             verticalAlignItems="center"
             hoverStyle={{ opacity: 0.9 }}
-            width={160}
-            height={32}
           >
-            <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>Add Template</Text>
+            <Text fill="#FFFFFF" fontSize={14} fontWeight={600}>Add to Palette</Text>
           </AutoLayout>
           <AutoLayout
-            tooltip="Select a widget and click 'Add Template'. You can register multiple widgets at once by selecting them or the section they are in."
+            tooltip="Adds selected 'Point' widgets to the palette. You can select multiple widgets directly or by selecting a section."
             width={16}
             height={16}
             cornerRadius={999}
