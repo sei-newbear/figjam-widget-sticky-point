@@ -12,14 +12,14 @@ export function StickyTaggerWidget() {
     const stickyNotes = selection.filter(node => node.type === 'STICKY');
 
     if (stickyNotes.length === 0) {
-      figma.notify('付箋を選択してください。');
+      figma.notify('Please select sticky notes.');
       return;
     }
 
     const templateWidget = await figma.getNodeByIdAsync(templateWidgetId);
 
     if (!templateWidget || templateWidget.type !== 'WIDGET') {
-      figma.notify('テンプレートウィジェットが見つからないか、無効です。');
+      figma.notify('Template widget not found or invalid.');
       return;
     }
 
@@ -27,7 +27,7 @@ export function StickyTaggerWidget() {
       const clonedWidget = templateWidget.clone();
 
       // 付箋の右下に配置するための座標を計算
-      const INSET_OFFSET = 5; // 右端と下端からのオフセット
+      const INSET_OFFSET = 5; // Offset from right and bottom edges
       const widgetWidth = clonedWidget.width;
       const widgetHeight = clonedWidget.height;
 
@@ -39,22 +39,22 @@ export function StickyTaggerWidget() {
         stickyNote.parent.appendChild(clonedWidget);
       }
     }
-    figma.notify(`${stickyNotes.length}個の付箋にタグを貼り付けました。`);
+    figma.notify(`Applied tags to ${stickyNotes.length} sticky notes.`);
   };
 
   const handleDeleteTag = (tagId: string) => {
     setTags(tags.filter(tag => tag.id !== tagId));
-    figma.notify('タグを削除しました。');
+    figma.notify('Tag deleted.');
   };
 
   const handleRegisterTemplate = async () => {
     const selection = figma.currentPage.selection;
     if (selection.length === 0) {
-      figma.notify('テンプレートとして登録するウィジェットを選択してください。');
+      figma.notify('Please select a widget to register as a template.');
       return;
     }
     if (selection.length > 1) {
-      figma.notify('テンプレートとして登録できるウィジェットは1つだけです。');
+      figma.notify('Only one widget can be registered as a template.');
       return;
     }
 
@@ -62,13 +62,13 @@ export function StickyTaggerWidget() {
 
     // 選択されたノードがウィジェットであるかを確認
     if (selectedNode.type !== 'WIDGET') {
-      figma.notify('選択されたノードはウィジェットではありません。');
+      figma.notify('The selected node is not a widget.');
       return;
     }
 
     // 既に同じテンプレートが登録されていないかチェック
     if (tags.some(tag => tag.templateWidgetId === selectedNode.id)) {
-      figma.notify('このウィジェットは既にテンプレートとして登録されています。');
+      figma.notify('This widget is already registered as a template.');
       return;
     }
 
@@ -82,7 +82,7 @@ export function StickyTaggerWidget() {
       point: point,
     };
     setTags([...tags, newTag]);
-    figma.notify(`「${label}」をテンプレートとして登録しました。`);
+    figma.notify(`"${label}" has been registered as a template.`);
   };
 
   return (
@@ -109,11 +109,14 @@ export function StickyTaggerWidget() {
         horizontalAlignItems="center"
         verticalAlignItems="center"
         hoverStyle={{ opacity: 0.9 }}
-        width={240}
-        height={40}
+        width={160}
+        height={32}
+        tooltip="Click to add the selected widget to your list of tag templates. Ensure only one widget is selected."
       >
-        <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>選択中のウィジェットをテンプレート登録</Text>
+        <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>Add Template</Text>
       </AutoLayout>
+
+      <AutoLayout height={10} /> 
 
       {tags.length > 0 ? (
         <AutoLayout direction="vertical" spacing={8}>
@@ -138,8 +141,9 @@ export function StickyTaggerWidget() {
               <AutoLayout
                 onClick={() => handleDeleteTag(tag.id)}
                 fill={'#DC3545'}
-                cornerRadius={8}
-                padding={4}
+                cornerRadius={999}
+                width={20}
+                height={20}
                 horizontalAlignItems="center"
                 verticalAlignItems="center"
                 hoverStyle={{ opacity: 0.9 }}
@@ -150,7 +154,7 @@ export function StickyTaggerWidget() {
           ))}
         </AutoLayout>
       ) : (
-        <Text fontSize={14} fill={'#6C757D'}>まだテンプレートが登録されていません。</Text>
+        <Text fontSize={14} fill={'#6C757D'}>No templates registered yet.</Text>
       )}
     </AutoLayout>
   );
