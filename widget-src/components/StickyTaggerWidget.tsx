@@ -42,6 +42,11 @@ export function StickyTaggerWidget() {
     figma.notify(`${stickyNotes.length}個の付箋にタグを貼り付けました。`);
   };
 
+  const handleDeleteTag = (tagId: string) => {
+    setTags(tags.filter(tag => tag.id !== tagId));
+    figma.notify('タグを削除しました。');
+  };
+
   const handleRegisterTemplate = async () => {
     const selection = figma.currentPage.selection;
     if (selection.length === 0) {
@@ -94,7 +99,7 @@ export function StickyTaggerWidget() {
       spacing={10}
     >
       <Text fontSize={28} fontWeight={700} fill={'#1A1A1A'}>Sticky Tagger</Text>
-      <Text fontSize={14} fill={'#6C757D'}>選択した付箋にタグを貼り付けます</Text>
+      <Text fontSize={14} fill={'#6C757D'}>Apply tags to selected sticky notes</Text>
 
       <AutoLayout
         onClick={handleRegisterTemplate}
@@ -115,15 +120,32 @@ export function StickyTaggerWidget() {
           {tags.map((tag) => (
             <AutoLayout
               key={tag.id}
-              onClick={() => handleTagClick(tag.templateWidgetId)}
-              fill={'#007BFF'}
-              cornerRadius={8}
-              padding={{ horizontal: 12, vertical: 8 }}
-              horizontalAlignItems="center"
+              direction="horizontal"
               verticalAlignItems="center"
-              hoverStyle={{ opacity: 0.9 }}
+              spacing={4}
             >
-              <Text fill={'#FFFFFF'} fontSize={16} fontWeight={600}>{tag.label} ({tag.point})</Text>
+              <AutoLayout
+                onClick={() => handleTagClick(tag.templateWidgetId)}
+                fill={'#007BFF'}
+                cornerRadius={8}
+                padding={{ horizontal: 12, vertical: 8 }}
+                horizontalAlignItems="center"
+                verticalAlignItems="center"
+                hoverStyle={{ opacity: 0.9 }}
+              >
+                <Text fill={'#FFFFFF'} fontSize={16} fontWeight={600}>{tag.label} ({tag.point})</Text>
+              </AutoLayout>
+              <AutoLayout
+                onClick={() => handleDeleteTag(tag.id)}
+                fill={'#DC3545'}
+                cornerRadius={8}
+                padding={4}
+                horizontalAlignItems="center"
+                verticalAlignItems="center"
+                hoverStyle={{ opacity: 0.9 }}
+              >
+                <Text fill={'#FFFFFF'} fontSize={12} fontWeight={600}>X</Text>
+              </AutoLayout>
             </AutoLayout>
           ))}
         </AutoLayout>
