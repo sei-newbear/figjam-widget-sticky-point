@@ -224,7 +224,7 @@ export function StickyTaggerWidget() {
             <Text fill="#FFFFFF" fontSize={14} fontWeight={600}>Add to Palette</Text>
           </AutoLayout>
           <AutoLayout
-            tooltip="Adds selected 'Point' widgets to the palette. You can select multiple widgets directly or by selecting a section."
+            tooltip="Adds selected 'Point' widgets to the palette. You can select multiple widgets or a section. Important: The original widget is used as the template, so if you delete it from the canvas, this tag will stop working."
             width={16}
             height={16}
             cornerRadius={999}
