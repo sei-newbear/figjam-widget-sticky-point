@@ -24,7 +24,21 @@ export function StickyTaggerWidget() {
       return;
     }
 
+    const isPointWidget = (node: SceneNode): node is WidgetNode => {
+      return node.type === 'WIDGET' && node.widgetId === figma.widgetId && node.widgetSyncedState['widgetType'] === 'point';
+    };
+
+    let appliedCount = 0;
+    let skippedCount = 0;
+
     for (const stickyNote of stickyNotes) {
+      const hasExistingPointWidget = stickyNote.stuckNodes.some(isPointWidget);
+
+      if (hasExistingPointWidget) {
+        skippedCount++;
+        continue;
+      }
+
       const clonedWidget = templateWidget.clone();
 
       // 付箋の右下に配置するための座標を計算
@@ -39,8 +53,25 @@ export function StickyTaggerWidget() {
       if (stickyNote.parent) {
         stickyNote.parent.appendChild(clonedWidget);
       }
+      appliedCount++;
     }
-    figma.notify(`Applied tags to ${stickyNotes.length} sticky notes.`);
+
+    let message = '';
+    if (appliedCount > 0) {
+      message += `Applied tags to ${appliedCount} sticky note(s).`;
+    }
+    if (skippedCount > 0) {
+      if (message) {
+        message += ' ';
+      }
+      message += `Skipped ${skippedCount} note(s) that already had a tag.`;
+    }
+    
+    if (message) {
+      figma.notify(message);
+    } else if (stickyNotes.length > 0) {
+      figma.notify('Selected sticky notes already have tags.');
+    }
   };
 
   const handleDeleteTag = (tagId: string) => {
