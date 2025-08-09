@@ -122,6 +122,9 @@ export function StickyTaggerWidget() {
     figma.notify(notificationMessage);
   };
 
+  const [showConfirmBulkDelete, setShowConfirmBulkDelete] = useSyncedState('showConfirmBulkDelete', false);
+  const [widgetsToDeleteCount, setWidgetsToDeleteCount] = useSyncedState('widgetsToDeleteCount', 0);
+
   const handleBulkDelete = () => {
     const selection = figma.currentPage.selection;
     if (selection.length === 0) {
@@ -135,7 +138,14 @@ export function StickyTaggerWidget() {
       figma.notify("No 'Point' widgets found in the selection.");
       return;
     }
+    setWidgetsToDeleteCount(pointWidgetsToDelete.length);
+    setShowConfirmBulkDelete(true);
+  };
 
+  const confirmBulkDelete = () => {
+    const selection = figma.currentPage.selection;
+    const pointWidgetsToDelete = getPointWidgetsFromSceneNodes(selection);
+    
     let deleteCount = 0;
     for (const widget of pointWidgetsToDelete) {
       if (!widget.removed) {
@@ -147,6 +157,15 @@ export function StickyTaggerWidget() {
     if (deleteCount > 0) {
       figma.notify(`Successfully deleted ${deleteCount} 'Point' widget(s).`);
     }
+    
+    setShowConfirmBulkDelete(false);
+    setWidgetsToDeleteCount(0); // Reset count
+  };
+
+  const cancelBulkDelete = () => {
+    setShowConfirmBulkDelete(false);
+    setWidgetsToDeleteCount(0);
+    figma.notify('Bulk deletion cancelled.');
   };
 
   const tagToDelete = tagIdToDelete ? tags.find(tag => tag.id === tagIdToDelete) : null;
@@ -316,6 +335,56 @@ export function StickyTaggerWidget() {
                 hoverStyle={{ opacity: 0.9 }}
               >
                 <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>No</Text>
+              </AutoLayout>
+            </AutoLayout>
+          </AutoLayout>
+        </AutoLayout>
+      )}
+
+      {showConfirmBulkDelete && (
+        <AutoLayout
+          fill="#00000080" // Semi-transparent overlay
+          width={280}
+          height={250}
+          verticalAlignItems="center"
+          horizontalAlignItems="center"
+          positioning="absolute"
+        >
+          <AutoLayout
+            fill="#FFFFFF"
+            cornerRadius={12}
+            padding={20}
+            direction="vertical"
+            spacing={16}
+            horizontalAlignItems="center"
+            width={280}
+          >
+            <Text fontSize={18} fontWeight={700}>Confirm Bulk Deletion</Text>
+            <Text fontSize={14} width={240} horizontalAlignText="center">
+              {`Are you sure you want to delete ${widgetsToDeleteCount} 'Point' widget(s) from your selection?`}
+            </Text>
+            <AutoLayout direction="horizontal" spacing={12}>
+              <AutoLayout
+                onClick={confirmBulkDelete}
+                fill="#DC3545"
+                cornerRadius={8}
+                padding={{ horizontal: 16, vertical: 8 }}
+                horizontalAlignItems="center"
+                verticalAlignItems="center"
+                hoverStyle={{ opacity: 0.9 }}
+              >
+                <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>Yes, Delete</Text>
+              </AutoLayout>
+              <AutoLayout
+                onClick={cancelBulkDelete}
+                fill="#6C757D"
+                cornerRadius={8}
+                padding={{ horizontal: 16, vertical: 8 }}
+                horizontalAlignItems="center"
+                verticalAlignItems="center"
+                hoverStyle={{ opacity: 0.9 }}
+              >
+                <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>Cancel</Text>
               </AutoLayout>
             </AutoLayout>
           </AutoLayout>
