@@ -333,17 +333,31 @@ export function StickyTaggerWidget() {
       <AutoLayout height={1} width="fill-parent" fill={'#E0E0E0'} />
 
       {/* Bulk Delete Button */}
-      <AutoLayout
-        onClick={handleBulkDelete}
-        fill={'#DC3545'}
-        cornerRadius={8}
-        padding={{ horizontal: 12, vertical: 6 }}
-        horizontalAlignItems="center"
-        verticalAlignItems="center"
-        hoverStyle={{ opacity: 0.9 }}
-        tooltip="Deletes all 'Point' widgets found within the current selection."
-      >
-        <Text fill={'#FFFFFF'} fontSize={14} fontWeight={600}>Delete Tags from Selection</Text>
+      <AutoLayout spacing={8} verticalAlignItems="center">
+        <AutoLayout
+          onClick={handleBulkDelete}
+          fill={'#DC3545'}
+          cornerRadius={8}
+          padding={{ horizontal: 12, vertical: 6 }}
+          horizontalAlignItems="center"
+          verticalAlignItems="center"
+          hoverStyle={{ opacity: 0.9 }}
+        >
+          <Text fill={'#FFFFFF'} fontSize={14} fontWeight={600}>Bulk Delete Tags</Text>
+        </AutoLayout>
+        <AutoLayout
+          tooltip="Deletes all 'Point' widgets found within the current selection. Widgets registered as templates in the palette will be skipped."
+          width={16}
+          height={16}
+          cornerRadius={999}
+          stroke={'#6C757D'}
+          strokeWidth={1}
+          horizontalAlignItems="center"
+          verticalAlignItems="center"
+          hoverStyle={{ stroke: '#1A1A1A' }}
+        >
+          <Text fontSize={10} fontWeight={700} fill={'#6C757D'} hoverStyle={{ fill: '#1A1A1A' }}>i</Text>
+        </AutoLayout>
       </AutoLayout>
 
       {showConfirmDelete && (
