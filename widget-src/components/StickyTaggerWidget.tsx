@@ -2,10 +2,10 @@ const { widget } = figma;
 const { AutoLayout, Text } = widget;
 const { useSyncedState } = widget;
 
-
-
 export function StickyTaggerWidget() {
   const [tags, setTags] = useSyncedState<Array<{ id: string, label: string, templateWidgetId: string, point: number }>>('stickyTaggerTags', []);
+  const [showConfirmDelete, setShowConfirmDelete] = useSyncedState<boolean>('showConfirmDelete', false);
+  const [tagIdToDelete, setTagIdToDelete] = useSyncedState<string | null>('tagIdToDelete', null);
 
   const handleTagClick = async (templateWidgetId: string) => {
     const selection = figma.currentPage.selection;
@@ -43,8 +43,23 @@ export function StickyTaggerWidget() {
   };
 
   const handleDeleteTag = (tagId: string) => {
-    setTags(tags.filter(tag => tag.id !== tagId));
-    figma.notify('Tag deleted.');
+    setTagIdToDelete(tagId);
+    setShowConfirmDelete(true);
+  };
+
+  const confirmDelete = () => {
+    if (tagIdToDelete) {
+      setTags(tags.filter(tag => tag.id !== tagIdToDelete));
+      figma.notify('Tag deleted.');
+    }
+    setShowConfirmDelete(false);
+    setTagIdToDelete(null);
+  };
+
+  const cancelDelete = () => {
+    figma.notify('Tag deletion cancelled.');
+    setShowConfirmDelete(false);
+    setTagIdToDelete(null);
   };
 
   const handleRegisterTemplate = async () => {
@@ -85,6 +100,8 @@ export function StickyTaggerWidget() {
     figma.notify(`"${label}" has been registered as a template.`);
   };
 
+  const tagToDeleteLabel = tagIdToDelete ? tags.find(tag => tag.id === tagIdToDelete)?.label : '';
+
   return (
     <AutoLayout
       verticalAlignItems={'center'}
@@ -97,6 +114,7 @@ export function StickyTaggerWidget() {
       direction="vertical"
       width={280}
       spacing={10}
+      positioning="auto"
     >
       <Text fontSize={28} fontWeight={700} fill={'#1A1A1A'}>Sticky Tagger</Text>
       <Text fontSize={14} fill={'#6C757D'}>Apply tags to selected sticky notes</Text>
@@ -116,7 +134,7 @@ export function StickyTaggerWidget() {
         <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>Add Template</Text>
       </AutoLayout>
 
-      <AutoLayout height={10} /> 
+      <AutoLayout height={10} />
 
       {tags.length > 0 ? (
         <AutoLayout direction="vertical" spacing={8}>
@@ -156,6 +174,55 @@ export function StickyTaggerWidget() {
       ) : (
         <Text fontSize={14} fill={'#6C757D'}>No templates registered yet.</Text>
       )}
+
+      {showConfirmDelete && (
+        <AutoLayout
+          fill="#00000080" // Semi-transparent overlay
+          width={280}
+          height={250}
+          verticalAlignItems="center"
+          horizontalAlignItems="center"
+          positioning="absolute"
+        >
+          <AutoLayout
+            fill="#FFFFFF"
+            cornerRadius={12}
+            padding={20}
+            direction="vertical"
+            spacing={16}
+            horizontalAlignItems="center"
+            width={280}
+          >
+            <Text fontSize={18} fontWeight={700}>Confirm Deletion</Text>
+            <Text fontSize={14} width={240} horizontalAlignText="center">{`Are you sure you want to delete "${tagToDeleteLabel}"?`}</Text>
+            <AutoLayout direction="horizontal" spacing={12}>
+              <AutoLayout
+                onClick={confirmDelete}
+                fill="#DC3545"
+                cornerRadius={8}
+                padding={{ horizontal: 16, vertical: 8 }}
+                horizontalAlignItems="center"
+                verticalAlignItems="center"
+                hoverStyle={{ opacity: 0.9 }}
+              >
+                <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>Yes</Text>
+              </AutoLayout>
+              <AutoLayout
+                onClick={cancelDelete}
+                fill="#6C757D"
+                cornerRadius={8}
+                padding={{ horizontal: 16, vertical: 8 }}
+                horizontalAlignItems="center"
+                verticalAlignItems="center"
+                hoverStyle={{ opacity: 0.9 }}
+              >
+                <Text fill="#FFFFFF" fontSize={16} fontWeight={600}>No</Text>
+              </AutoLayout>
+            </AutoLayout>
+          </AutoLayout>
+        </AutoLayout>
+      )}
     </AutoLayout>
   );
 }
+
