@@ -105,7 +105,7 @@ export function StickyTaggerWidget() {
       </AutoLayout>
 
       {tags.length > 0 ? (
-        <AutoLayout direction="horizontal" spacing={8} wrap>
+        <AutoLayout direction="vertical" spacing={8}>
           {tags.map((tag) => (
             <AutoLayout
               key={tag.id}
