@@ -244,7 +244,7 @@ export function StickyTaggerWidget() {
       stroke={'#E0E0E0'}
       strokeWidth={1}
       direction="vertical"
-      width={260}
+      width={220}
       spacing={8}
       positioning="auto"
     >
@@ -304,7 +304,7 @@ export function StickyTaggerWidget() {
       </AutoLayout>
 
       {tags.length > 0 ? (
-        <AutoLayout direction="vertical" spacing={8}>
+        <AutoLayout direction="vertical" spacing={8} width="fill-parent" horizontalAlignItems="start" padding={{ left: 8 }}>
           {[...tags].sort((a, b) => a.point - b.point).map((tag) => (
             <AutoLayout
               key={tag.id}
@@ -380,7 +380,7 @@ export function StickyTaggerWidget() {
       {showConfirmDelete && (
         <AutoLayout
           fill="#00000080" // Semi-transparent overlay
-          width={260}
+          width={220}
           height={250}
           verticalAlignItems="center"
           horizontalAlignItems="center"
@@ -393,7 +393,7 @@ export function StickyTaggerWidget() {
             direction="vertical"
             spacing={16}
             horizontalAlignItems="center"
-            width={260}
+            width={220}
           >
             <Text fontSize={18} fontWeight={700}>Confirm Deletion</Text>
             <Text fontSize={14} width={220} horizontalAlignText="center">{tagToDelete ? `Are you sure you want to delete "${tagToDelete.label}" (${tagToDelete.point} pts)?` : ''}</Text>
@@ -428,7 +428,7 @@ export function StickyTaggerWidget() {
       {showConfirmBulkDelete && (
         <AutoLayout
           fill="#00000080" // Semi-transparent overlay
-          width={260}
+          width={220}
           height={250}
           verticalAlignItems="center"
           horizontalAlignItems="center"
@@ -441,10 +441,10 @@ export function StickyTaggerWidget() {
             direction="vertical"
             spacing={16}
             horizontalAlignItems="center"
-            width={260}
+            width={220}
           >
             <Text fontSize={18} fontWeight={700}>Confirm Bulk Deletion</Text>
-            <Text fontSize={14} width={220} horizontalAlignText="center">
+            <Text fontSize={14} width={180} horizontalAlignText="center">
               {`Are you sure you want to delete ${widgetsToDeleteCount} 'Point' widget(s) from your selection?`}
             </Text>
             <AutoLayout direction="horizontal" spacing={12}>
