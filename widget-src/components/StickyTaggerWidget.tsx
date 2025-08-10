@@ -127,7 +127,7 @@ export function StickyTaggerWidget() {
         continue;
       }
 
-      const label = widget.name || 'Unnamed Tag';
+
       // pointの取得方法を安全にする
       const point = (widget.widgetSyncedState.point && typeof widget.widgetSyncedState.point === 'number') 
                       ? widget.widgetSyncedState.point 
@@ -135,7 +135,7 @@ export function StickyTaggerWidget() {
 
       const newTag: Tag = {
         id: `tag-${widget.id}-${Date.now()}`, // IDが一意になるようにwidget.idも加える
-        label: label,
+        label: "Point",
         templateWidgetId: widget.id,
         point: point,
         backgroundColor: widget.widgetSyncedState.backgroundColor as string,
