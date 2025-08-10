@@ -3,8 +3,17 @@ const { AutoLayout, Text } = widget;
 const { useSyncedState } = widget;
 import { getPointWidgetsFromSceneNodes } from '../utils/pointWidget';
 
+interface Tag {
+  id: string;
+  label: string;
+  templateWidgetId: string;
+  point: number;
+  backgroundColor?: string;
+  textColor?: string;
+}
+
 export function StickyTaggerWidget() {
-  const [tags, setTags] = useSyncedState<Array<{ id: string, label: string, templateWidgetId: string, point: number }>>('stickyTaggerTags', []);
+  const [tags, setTags] = useSyncedState<Tag[]>('stickyTaggerTags', []);
   const [showConfirmDelete, setShowConfirmDelete] = useSyncedState<boolean>('showConfirmDelete', false);
   const [tagIdToDelete, setTagIdToDelete] = useSyncedState<string | null>('tagIdToDelete', null);
 
@@ -124,11 +133,13 @@ export function StickyTaggerWidget() {
                       ? widget.widgetSyncedState.point 
                       : 0;
 
-      const newTag = {
+      const newTag: Tag = {
         id: `tag-${widget.id}-${Date.now()}`, // IDが一意になるようにwidget.idも加える
         label: label,
         templateWidgetId: widget.id,
         point: point,
+        backgroundColor: widget.widgetSyncedState.backgroundColor as string,
+        textColor: widget.widgetSyncedState.textColor as string,
       };
       newTags.push(newTag);
     }
@@ -303,14 +314,16 @@ export function StickyTaggerWidget() {
             >
               <AutoLayout
                 onClick={() => handleTagClick(tag.templateWidgetId)}
-                fill={'#007BFF'}
+                fill={tag.backgroundColor || '#007BFF'}
                 cornerRadius={8}
                 padding={{ horizontal: 10, vertical: 5 }}
                 horizontalAlignItems="center"
                 verticalAlignItems="center"
                 hoverStyle={{ opacity: 0.9 }}
+                stroke={'#000000'}
+                strokeWidth={1}
               >
-                <Text fill={'#FFFFFF'} fontSize={14} fontWeight={600}>{tag.label} ({tag.point})</Text>
+                <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{tag.label} ({tag.point})</Text>
               </AutoLayout>
               <AutoLayout
                 onClick={() => handleDeleteTag(tag.id)}
