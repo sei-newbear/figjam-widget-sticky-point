@@ -344,11 +344,13 @@ export function StickyTaggerWidget() {
         <Text fontSize={14} fill={'#6C757D'}>No templates registered yet.</Text>
       )}
 
+      <AutoLayout height={4} />
+
       {/* Separator */}
       <AutoLayout height={1} width="fill-parent" fill={'#E0E0E0'} />
 
       {/* Bulk Delete Button */}
-      <AutoLayout spacing={8} verticalAlignItems="center">
+      <AutoLayout spacing={8} verticalAlignItems="center" horizontalAlignItems="end" width="fill-parent">
         <AutoLayout
           onClick={handleBulkDelete}
           fill={'#DC3545'}
