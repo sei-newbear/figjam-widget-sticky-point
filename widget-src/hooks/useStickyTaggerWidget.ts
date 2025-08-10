@@ -1,7 +1,8 @@
 const { widget } = figma;
 const { useSyncedState } = widget;
 
-import { getPointWidgetsFromSceneNodes } from '../utils/pointWidget';
+import { getPointWidgetsFromSceneNodes, applyPointWidgetToStickies, deletePointWidgets } from '../utils/pointWidget';
+import { createTagFromWidget, filterNewWidgets } from '../logic/taggingLogic';
 import { Tag } from '../types';
 
 export const useStickyTaggerWidget = () => {
@@ -10,6 +11,8 @@ export const useStickyTaggerWidget = () => {
   const [tagIdToDelete, setTagIdToDelete] = useSyncedState<string | null>('tagIdToDelete', null);
   const [showConfirmBulkDelete, setShowConfirmBulkDelete] = useSyncedState('showConfirmBulkDelete', false);
   const [widgetsToDeleteCount, setWidgetsToDeleteCount] = useSyncedState('widgetsToDeleteCount', 0);
+
+  // --- Tag Application ---
 
   const handleTagClick = async (templateWidgetId: string) => {
     const selection = figma.currentPage.selection;
@@ -22,49 +25,20 @@ export const useStickyTaggerWidget = () => {
 
     const templateWidget = await figma.getNodeByIdAsync(templateWidgetId);
 
-    if (!templateWidget || templateWidget.type !== 'WIDGET') {
+    if (!templateWidget || templateWidget.type !== 'WIDGET' || templateWidget.widgetId !== figma.widgetId) {
       figma.notify('Template widget not found or invalid.');
       return;
     }
 
-    const isPointWidget = (node: SceneNode): node is WidgetNode => {
-      return node.type === 'WIDGET' && node.widgetId === figma.widgetId && node.widgetSyncedState['widgetType'] === 'point';
-    };
+    const { appliedCount, skippedCount } = await applyPointWidgetToStickies(templateWidget, stickyNotes);
 
-    let appliedCount = 0;
-    let skippedCount = 0;
-
-    for (const stickyNote of stickyNotes) {
-      const hasExistingPointWidget = stickyNote.stuckNodes.some(isPointWidget);
-
-      if (hasExistingPointWidget) {
-        skippedCount++;
-        continue;
-      }
-
-      const clonedWidget = templateWidget.clone();
-
-      const INSET_OFFSET = 5;
-      const widgetWidth = clonedWidget.width;
-      const widgetHeight = clonedWidget.height;
-
-      clonedWidget.x = stickyNote.x + stickyNote.width - widgetWidth - INSET_OFFSET;
-      clonedWidget.y = stickyNote.y + stickyNote.height - widgetHeight - INSET_OFFSET;
-
-      if (stickyNote.parent) {
-        stickyNote.parent.appendChild(clonedWidget);
-      }
-      appliedCount++;
-    }
-
+    // Notification logic remains in the hook as it's a UI concern.
     let message = '';
     if (appliedCount > 0) {
       message += `Applied tags to ${appliedCount} sticky note(s).`;
     }
     if (skippedCount > 0) {
-      if (message) {
-        message += ' ';
-      }
+      if (message) message += ' ';
       message += `Skipped ${skippedCount} note(s) that already had a tag.`;
     }
     
@@ -74,6 +48,46 @@ export const useStickyTaggerWidget = () => {
       figma.notify('Selected sticky notes already have tags.');
     }
   };
+
+  // --- Template Registration ---
+
+  const handleRegisterTemplate = async () => {
+    const selection = figma.currentPage.selection;
+    if (selection.length === 0) {
+      figma.notify('Please select widgets or a section to register as a template.');
+      return;
+    }
+
+    const widgetsToRegister = getPointWidgetsFromSceneNodes(selection);
+    if (widgetsToRegister.length === 0) {
+      figma.notify('No widgets found in the selection. Please select widgets to register.');
+      return;
+    }
+
+    const { newWidgets, alreadyRegisteredCount } = filterNewWidgets(widgetsToRegister, tags);
+    
+    const newTags = newWidgets.map(createTagFromWidget);
+
+    if (newTags.length > 0) {
+      setTags([...tags, ...newTags]);
+    }
+    
+    // Notification logic
+    let message = '';
+    if (newTags.length > 0) {
+        message += `${newTags.length} new template(s) registered.`;
+    }
+    if (alreadyRegisteredCount > 0) {
+        if (message) message += ' ';
+        message += `${alreadyRegisteredCount} template(s) were already registered.`;
+    }
+    if (!message) {
+        message = 'Selected widget(s) are already registered.';
+    }
+    figma.notify(message);
+  };
+
+  // --- Tag Deletion ---
 
   const handleDeleteTag = (tagId: string) => {
     setTagIdToDelete(tagId);
@@ -95,62 +109,7 @@ export const useStickyTaggerWidget = () => {
     setTagIdToDelete(null);
   };
 
-  const handleRegisterTemplate = async () => {
-    const selection = figma.currentPage.selection;
-    if (selection.length === 0) {
-      figma.notify('Please select widgets or a section to register as a template.');
-      return;
-    }
-
-    const widgetsToRegister = getPointWidgetsFromSceneNodes(selection);
-
-    if (widgetsToRegister.length === 0) {
-      figma.notify('No widgets found in the selection. Please select widgets to register.');
-      return;
-    }
-
-    const newTags: Tag[] = [];
-    let alreadyRegisteredCount = 0;
-
-    for (const widget of widgetsToRegister) {
-      if (tags.some(tag => tag.templateWidgetId === widget.id)) {
-        alreadyRegisteredCount++;
-        continue;
-      }
-
-      const point = (widget.widgetSyncedState.point && typeof widget.widgetSyncedState.point === 'number') 
-                      ? widget.widgetSyncedState.point 
-                      : 0;
-
-      const newTag: Tag = {
-        id: `tag-${widget.id}-${Date.now()}`,
-        label: "Point",
-        templateWidgetId: widget.id,
-        point: point,
-        backgroundColor: widget.widgetSyncedState.backgroundColor as string,
-        textColor: widget.widgetSyncedState.textColor as string,
-      };
-      newTags.push(newTag);
-    }
-
-    if (newTags.length > 0) {
-      setTags([...tags, ...newTags]);
-    }
-    
-    let notificationMessage = '';
-    if (newTags.length > 0) {
-        notificationMessage += `${newTags.length} new template(s) registered.`;
-    }
-    if (alreadyRegisteredCount > 0) {
-        if (notificationMessage) notificationMessage += ' ';
-        notificationMessage += `${alreadyRegisteredCount} template(s) were already registered.`;
-    }
-    if (!notificationMessage) {
-        notificationMessage = 'Selected widget(s) are already registered.';
-    }
-
-    figma.notify(notificationMessage);
-  };
+  // --- Bulk Widget Deletion ---
 
   const handleBulkDelete = () => {
     const selection = figma.currentPage.selection;
@@ -160,7 +119,6 @@ export const useStickyTaggerWidget = () => {
     }
 
     const pointWidgetsToDelete = getPointWidgetsFromSceneNodes(selection);
-
     if (pointWidgetsToDelete.length === 0) {
       figma.notify("No 'Point' widgets found in the selection.");
       return;
@@ -172,32 +130,17 @@ export const useStickyTaggerWidget = () => {
   const confirmBulkDelete = () => {
     const selection = figma.currentPage.selection;
     const pointWidgetsToDelete = getPointWidgetsFromSceneNodes(selection);
-
     const templateIds = new Set(tags.map(tag => tag.templateWidgetId));
 
-    let deleteCount = 0;
-    let skippedCount = 0;
+    const { deleteCount, skippedCount } = deletePointWidgets(pointWidgetsToDelete, templateIds);
 
-    for (const widget of pointWidgetsToDelete) {
-      if (templateIds.has(widget.id)) {
-        skippedCount++;
-        continue;
-      }
-
-      if (!widget.removed) {
-        widget.remove();
-        deleteCount++;
-      }
-    }
-
+    // Notification logic
     let message = '';
     if (deleteCount > 0) {
       message += `Successfully deleted ${deleteCount} 'Point' widget(s).`;
     }
     if (skippedCount > 0) {
-      if (message) {
-        message += ' ';
-      }
+      if (message) message += ' ';
       message += `Skipped ${skippedCount} widget(s) used as templates.`;
     }
 
@@ -217,12 +160,14 @@ export const useStickyTaggerWidget = () => {
     figma.notify('Bulk deletion cancelled.');
   };
 
+  // --- Returned State and Functions ---
+
   const tagToDelete = tagIdToDelete ? tags.find(tag => tag.id === tagIdToDelete) : null;
 
   return {
     tags,
     showConfirmDelete,
-    tagIdToDelete,
+    tagToDelete,
     showConfirmBulkDelete,
     widgetsToDeleteCount,
     handleTagClick,
@@ -233,6 +178,5 @@ export const useStickyTaggerWidget = () => {
     handleBulkDelete,
     confirmBulkDelete,
     cancelBulkDelete,
-    tagToDelete,
   };
 };
