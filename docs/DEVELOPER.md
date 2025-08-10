@@ -22,14 +22,17 @@
         - `PointWidget.tsx`: タグ付けモード（Point Widget）のUIを定義します。
         - `CounterWidget.tsx`: カウントモード（Counter Tool）のUIを定義します。
         - `OrganizerWidget.tsx`: 整理モード（Organizer Tool）のUIを定義します。
+        - `StickyTaggerWidget.tsx`: タグ付け支援モード（Sticky Tagger）のUIを定義します。
     - `hooks/`: State管理や副作用を含むロジック（カスタムフック）を格納します。
         - `useWidgetPropertyMenu.ts`: Figmaのプロパティメニューの構築とイベント処理を担当するフックです。
         - `usePointWidget.ts`: `PointWidget`の追従機能やグループ化など、ロジック部分を担当するフックです。
         - `useCounterWidget.ts`: `CounterWidget`のポイント計算やState管理など、ロジック部分を担当するフックです。
         - `useOrganizerWidget.ts`: `OrganizerWidget`のグループ化/グループ解除ロジックを担当するフックです。
+        - `useStickyTaggerWidget.ts`: `StickyTaggerWidget`のタグ登録や付与ロジックを担当するフックです。
     - `logic/`: UIやFigma APIの副作用から独立した、純粋なビジネスロジックを格納します。
         - `calculation.ts`: ポイントの合計値や内訳を計算するロジックを担当します。
         - `groupingRules.ts`: グループ化に関するルールを定義するロジックを担当します。
+        - `taggingLogic.ts`: タグの作成やフィルタリングに関するロジックを担当します。
     - `types.ts`: ウィジェット全体で使用されるTypeScriptの型定義を格納します。
     - `utils/`: 特定のコンポーネントやフックに依存しない、汎用的なユーティリティ関数を格納します。
         - `grouping.ts`: オブジェクトのグループ化に関連するユーティリティ関数です。
@@ -41,6 +44,7 @@
     - `logic/`: `widget-src/logic`内のビジネスロジックに対応するテストです。
         - `calculation.test.ts`
         - `groupingRules.test.ts`
+        - `taggingLogic.test.ts`
     - `utils/`: `widget-src/utils`内のユーティリティ関数に対応するテストです。
         - `pointWidget.test.ts`
     - `setupTests.ts`: Jestのテスト環境をセットアップするためのファイルです。

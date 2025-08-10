@@ -1,5 +1,15 @@
 # Release Note
 
+## v10
+New feature: Sticky Tagger for Rapid Pointing
+
+This release introduces the 'Sticky Tagger' tool, which is designed to make it quicker and easier to add points to multiple sticky notes at once.
+
+New: Sticky Tagger tool. Select 'Sticky Tagger' from the widget menu. This tool enables you to create a palette of reusable 'Point' widgets.
+- New - Tag Palette: Register existing 'Point' widgets as 'tags' in the palette. This preserves their point value and colour.
+- New - Apply Tags: Select multiple sticky notes and click a tag in the palette to instantly apply a copy of the point widget to each one.
+- New: Bulk Delete: This new function allows you to delete all point widgets within a selection while automatically skipping any widgets registered in your palette.
+
 ## v9
 New Point Organizer and Enhanced Grouping
 
