@@ -303,12 +303,12 @@ export function StickyTaggerWidget() {
                 onClick={() => handleTagClick(tag.templateWidgetId)}
                 fill={'#007BFF'}
                 cornerRadius={8}
-                padding={{ horizontal: 12, vertical: 8 }}
+                padding={{ horizontal: 10, vertical: 5 }}
                 horizontalAlignItems="center"
                 verticalAlignItems="center"
                 hoverStyle={{ opacity: 0.9 }}
               >
-                <Text fill={'#FFFFFF'} fontSize={16} fontWeight={600}>{tag.label} ({tag.point})</Text>
+                <Text fill={'#FFFFFF'} fontSize={14} fontWeight={600}>{tag.label} ({tag.point})</Text>
               </AutoLayout>
               <AutoLayout
                 onClick={() => handleDeleteTag(tag.id)}
