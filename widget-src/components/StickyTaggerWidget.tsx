@@ -269,6 +269,8 @@ export function StickyTaggerWidget() {
           </AutoLayout>
         </AutoLayout>
 
+        <AutoLayout height={1} width="fill-parent" fill={'#E0E0E0'} />
+
         {/* --- Apply Tags --- */}
         <AutoLayout direction="vertical" spacing={4} width="fill-parent">
           <AutoLayout spacing={8} verticalAlignItems="center">
