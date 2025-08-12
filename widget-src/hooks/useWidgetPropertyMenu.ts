@@ -12,6 +12,7 @@ export function useWidgetPropertyMenu(
   groupingEnabled: boolean,
   counterSizeMode: CounterSizeMode,
   countTarget: CountTarget,
+  enableExperimentalPreload: boolean,
   setWidgetType: (type: WidgetType) => void,
   setSize: (size: Size) => void,
   setWidth: (width: number) => void,
@@ -20,6 +21,7 @@ export function useWidgetPropertyMenu(
   setGroupingEnabled: (enabled: boolean) => void,
   setCounterSizeMode: (mode: CounterSizeMode) => void,
   setCountTarget: (target: CountTarget) => void,
+  setEnableExperimentalPreload: (enabled: boolean) => void,
 ) {
   usePropertyMenu(
     [
@@ -134,6 +136,20 @@ export function useWidgetPropertyMenu(
             },
           ]
         : []),
+      // Sticky Tagger widget用のプロパティ
+      ...(widgetType === 'stickyTagger'
+        ? [
+            {
+              itemType: 'toggle' as const,
+              propertyName: 'enableExperimentalPreload',
+              tooltip: 'Enable experimental preload to fix tagging issues in some environments.',
+              isToggled: enableExperimentalPreload,
+                            icon: `<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill="${enableExperimentalPreload ? '#FFFFFF' : '#6C757D'}" d="M20 5 L10 20 H18 L16 35 L26 20 H18 L20 5 Z"/>
+              </svg>`,
+            },
+          ]
+        : []),
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'widgetType' && propertyValue) {
@@ -152,6 +168,8 @@ export function useWidgetPropertyMenu(
         setCountTarget(propertyValue as CountTarget)
       } else if (propertyName === 'groupingEnabled') {
         setGroupingEnabled(!groupingEnabled)
+      } else if (propertyName === 'enableExperimentalPreload') {
+        setEnableExperimentalPreload(!enableExperimentalPreload)
       }
     },
   )

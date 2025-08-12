@@ -18,6 +18,7 @@ function Widget() {
   const [counterSizeMode, setCounterSizeMode] = useSyncedState<CounterSizeMode>('counterSizeMode', 'normal')
   const [countTarget, setCountTarget] = useSyncedState<CountTarget>('countTarget', 'manual')
   const [groupingEnabled, setGroupingEnabled] = useSyncedState<boolean>('groupingEnabled', false)
+  const [enableExperimentalPreload, setEnableExperimentalPreload] = useSyncedState<boolean>('enableExperimentalPreload', false)
 
   useWidgetPropertyMenu(
     widgetType,
@@ -28,6 +29,7 @@ function Widget() {
     groupingEnabled,
     counterSizeMode,
     countTarget,
+    enableExperimentalPreload,
     setWidgetType,
     setSize,
     setWidth,
@@ -35,7 +37,8 @@ function Widget() {
     setTextColor,
     setGroupingEnabled,
     setCounterSizeMode,
-    setCountTarget
+    setCountTarget,
+    setEnableExperimentalPreload
   )
 
   if (widgetType === 'point') {
@@ -45,7 +48,7 @@ function Widget() {
   } else if (widgetType === 'organizer') {
     return <OrganizerWidget />
   } else if (widgetType === 'stickyTagger') {
-    return <StickyTaggerWidget />
+    return <StickyTaggerWidget enableExperimentalPreload={enableExperimentalPreload} />
   }
 }
 
