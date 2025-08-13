@@ -1,5 +1,12 @@
 # Release Note
 
+## v11
+Improved Sticky Tagger Reliability
+
+This update introduces an experimental preload option for the Sticky Tagger to address tagging issues in certain environments.
+
+- New - Experimental Preload for Sticky Tagger: A new toggle in the Sticky Tagger's property menu allows you to enable an experimental preload. This feature is designed to improve the reliability of tag application, especially in environments where tagging issues have been observed.
+
 ## v10
 New feature: Sticky Tagger for Rapid Pointing
 
