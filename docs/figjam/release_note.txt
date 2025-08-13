@@ -1,5 +1,12 @@
 # Release Note
 
+## v12
+Simplified Tagging and Improved Stability
+
+This update removes the experimental "Preload" option from the Sticky Tagger for a more streamlined and reliable experience.
+
+- Removed - Experimental Preload for Sticky Tagger: The toggle in the Sticky Tagger's property menu for the experimental preload has been removed. The underlying tagging logic has been improved, making this option no longer necessary. This results in a cleaner interface and more consistent performance.
+
 ## v11
 Improved Sticky Tagger Reliability
 
