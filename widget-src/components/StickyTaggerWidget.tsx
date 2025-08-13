@@ -3,7 +3,7 @@ const { AutoLayout, Text } = widget;
 
 import { useStickyTaggerWidget } from '../hooks/useStickyTaggerWidget';
 
-export function StickyTaggerWidget({ enableExperimentalPreload }: { enableExperimentalPreload: boolean }) {
+export function StickyTaggerWidget() {
   const {
     tags,
     showConfirmDelete,
@@ -18,7 +18,7 @@ export function StickyTaggerWidget({ enableExperimentalPreload }: { enableExperi
     confirmBulkDelete,
     cancelBulkDelete,
     tagToDelete,
-  } = useStickyTaggerWidget(enableExperimentalPreload);
+  } = useStickyTaggerWidget();
 
   return (
     <AutoLayout

@@ -5,7 +5,7 @@ import { getPointWidgetsFromSceneNodes, applyPointWidgetToStickies, deletePointW
 import { createTagFromWidget, filterNewWidgets } from '../logic/taggingLogic';
 import { Tag } from '../types';
 
-export const useStickyTaggerWidget = (enableExperimentalPreload: boolean) => {
+export const useStickyTaggerWidget = () => {
   const [tags, setTags] = useSyncedState<Tag[]>('stickyTaggerTags', []);
   const [showConfirmDelete, setShowConfirmDelete] = useSyncedState<boolean>('showConfirmDelete', false);
   const [tagIdToDelete, setTagIdToDelete] = useSyncedState<string | null>('tagIdToDelete', null);
@@ -15,11 +15,6 @@ export const useStickyTaggerWidget = (enableExperimentalPreload: boolean) => {
   // --- Tag Application ---
 
   const handleTagClick = async (templateWidgetId: string) => {
-    if (enableExperimentalPreload) {
-      await figma.currentPage.loadAsync();
-      figma.notify('Experimental preload executed.');
-    }
-
     const selection = figma.currentPage.selection;
     const stickyNotes = selection.filter(node => node.type === 'STICKY');
 
