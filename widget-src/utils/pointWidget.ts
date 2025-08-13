@@ -79,14 +79,15 @@ export const applyPointWidgetToStickies = async (
     const INSET_OFFSET = 5; // Offset from right and bottom edges
     const widgetWidth = clonedWidget.width;
     const widgetHeight = clonedWidget.height;
-
-    clonedWidget.x = stickyNote.x + stickyNote.width - widgetWidth - INSET_OFFSET;
-    clonedWidget.y = stickyNote.y + stickyNote.height - widgetHeight - INSET_OFFSET;
-
+    
     // 付箋と同じ親にクローンされたウィジェットを追加
     if (stickyNote.parent) {
       stickyNote.parent.appendChild(clonedWidget);
     }
+
+    clonedWidget.x = stickyNote.x + stickyNote.width - widgetWidth - INSET_OFFSET;
+    clonedWidget.y = stickyNote.y + stickyNote.height - widgetHeight - INSET_OFFSET;
+
     appliedCount++;
   }
 
