@@ -11,10 +11,10 @@ export function useOrganizerWidget() {
     figma.notify('Selected Point Widgets grouped!');
   };
 
-  const ungroupSelectedItems = async () => {
+  const ungroupSelectedItems = async (isForceMode: boolean = false) => {
     const selectedPointWidgets = getPointWidgetsFromSceneNodes(figma.currentPage.selection);
     for (const node of selectedPointWidgets) {
-      ungroupWidget(node);
+      ungroupWidget(node, isForceMode);
     }
     figma.notify('Selected Point Widgets ungrouped!');
   };

@@ -10,11 +10,16 @@ export function shouldGroup(widgetNode: WidgetNode): widgetNode is StuckWidgetNo
   return !!widgetNode.stuckTo;
 }
 
-export function shouldUngroup(widgetNode: WidgetNode): widgetNode is GroupedWidgetNode {
+export function shouldUngroup(widgetNode: WidgetNode, isForceMode: boolean = false): widgetNode is GroupedWidgetNode {
   const parent = widgetNode.parent;
   // グループ化されていない場合は対象外
   if (parent?.type !== 'GROUP') {
     return false;
+  }
+
+  // 強制モードが有効な場合は、子要素の数のチェックをスキップ
+  if (isForceMode) {
+    return true;
   }
 
   // グループの子要素が2つでない場合（意図しないグループ化）は解除しない

@@ -15,8 +15,8 @@ export function groupWidget(widgetNode: WidgetNode): void {
 /**
  * 条件を満たす場合、ウィジェットのグループを解除する
  */
-export function ungroupWidget(widgetNode: WidgetNode): void {
-  if (!shouldUngroup(widgetNode)) return;
+export function ungroupWidget(widgetNode: WidgetNode, isForceMode: boolean = false): void {
+  if (!shouldUngroup(widgetNode, isForceMode)) return;
 
   // shouldUngroupがtrueを返すため、widgetNode.parent は GroupNode であることが保証される
   figma.ungroup(widgetNode.parent);

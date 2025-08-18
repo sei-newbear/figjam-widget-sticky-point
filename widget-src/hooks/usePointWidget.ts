@@ -35,7 +35,7 @@ export function usePointWidget(groupingEnabled: boolean) {
       }
     }
 
-    async function handleNewHost(newHostId: string) {
+    async function handleNewHost(_newHostId: string) {
       if (!groupingEnabled) return;
 
       const widgetNode = await getWidgetNode();                  

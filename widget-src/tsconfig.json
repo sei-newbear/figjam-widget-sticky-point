@@ -5,9 +5,12 @@
     "jsxFragmentFactory": "figma.widget.Fragment",
     "target": "es2016",
     "lib": [
-      "es2016"
+      "es2016",
+      "dom",
+      "dom.iterable"
     ],
     "strict": true,
+    "skipLibCheck": true,
     "typeRoots": [
       "../node_modules/@types",
       "../node_modules/@figma"

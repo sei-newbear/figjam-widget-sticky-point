@@ -34,7 +34,10 @@
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-      "project": "./widget-src/tsconfig.json"
+      "project": [
+        "./widget-src/tsconfig.json",
+        "./test/tsconfig.json"
+      ]
     },
     "root": true,
     "rules": {
@@ -46,6 +49,16 @@
           "caughtErrorsIgnorePattern": "^_"
         }
       ]
-    }
+    },
+    "overrides": [
+      {
+        "files": [
+          "test/**/*.ts"
+        ],
+        "rules": {
+          "@typescript-eslint/no-explicit-any": "off"
+        }
+      }
+    ]
   }
 }

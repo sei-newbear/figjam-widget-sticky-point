@@ -53,5 +53,30 @@ describe('groupingRules', () => {
       });
       expect(shouldUngroup(widgetNode)).toBe(false);
     });
+
+    it('should return true if the group has more than 2 children when isForceMode is true', () => {
+      const widgetNode = createMockWidgetNode({
+        parent: {
+          type: 'GROUP',
+          children: [{}, {}, {}],
+        },
+      });
+      expect(shouldUngroup(widgetNode, true)).toBe(true);
+    });
+
+    it('should return true if the group has less than 2 children when isForceMode is true', () => {
+      const widgetNode = createMockWidgetNode({
+        parent: {
+          type: 'GROUP',
+          children: [{}],
+        },
+      });
+      expect(shouldUngroup(widgetNode, true)).toBe(true);
+    });
+
+    it('should return false if not in a group even when isForceMode is true', () => {
+      const widgetNode = createMockWidgetNode({ parent: { type: 'PAGE' } });
+      expect(shouldUngroup(widgetNode, true)).toBe(false);
+    });
   });
 });
