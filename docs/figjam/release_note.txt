@@ -1,3 +1,10 @@
+## v14
+New Compact Mode for Sticky Tagger
+
+This update introduces a "Compact" mode for the Sticky Tagger, providing a more streamlined view for applying tags.
+
+- New - Compact Mode for Sticky Tagger: You can now switch the Sticky Tagger to "Compact" mode via the property menu. This mode offers a space-saving design, displaying only an icon and the tag palette for quicker application. "Normal" mode remains available for adding and managing tags.
+
 ## v13
 Enhanced Organizer and UI Refresh
 
