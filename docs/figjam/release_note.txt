@@ -1,3 +1,11 @@
+## v13
+Enhanced Organizer and UI Refresh
+
+This update introduces a "Force Ungroup" option for more flexible organization and a more compact design for the Point Organizer widget.
+
+- New - Force Ungroup: The Point Organizer now includes a "Force Ungroup" toggle. This allows you to ungroup items even if they don't meet the standard two-item requirement, giving you more control over your groupings.
+- Update - Compact Organizer UI: The Point Organizer widget has been redesigned to be more compact, with smaller buttons and adjusted spacing for a cleaner and more streamlined appearance.
+
 # Release Note
 
 ## v12
