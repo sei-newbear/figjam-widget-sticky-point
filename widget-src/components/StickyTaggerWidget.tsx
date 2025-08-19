@@ -56,7 +56,7 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
           ))}
         </AutoLayout>
       ) : (
-        <Text fontSize={14} fill={'#6C757D'}>No templates</Text>
+        <Text fontSize={14} fill={'#6C757D'}>No templates. Switch to normal mode to add tags.</Text>
       )}
       </AutoLayout>
     )
