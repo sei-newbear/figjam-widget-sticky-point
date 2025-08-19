@@ -2,7 +2,7 @@
 
 const { widget } = figma
 const { useSyncedState } = widget
-import { WidgetType, Size, CounterSizeMode, CountTarget } from './types'
+import { WidgetType, Size, CounterSizeMode, CountTarget, StickyTaggerSizeMode } from './types'
 import { PointWidget } from './components/PointWidget'
 import { CounterWidget } from './components/CounterWidget'
 import { OrganizerWidget } from './components/OrganizerWidget'
@@ -16,6 +16,7 @@ function Widget() {
   const [textColor, setTextColor] = useSyncedState<string>('textColor', '#000000')
   const [width, setWidth] = useSyncedState<number>('width', 72)
   const [counterSizeMode, setCounterSizeMode] = useSyncedState<CounterSizeMode>('counterSizeMode', 'normal')
+  const [stickyTaggerSizeMode, setStickyTaggerSizeMode] = useSyncedState<StickyTaggerSizeMode>('stickyTaggerSizeMode', 'normal')
   const [countTarget, setCountTarget] = useSyncedState<CountTarget>('countTarget', 'manual')
   const [groupingEnabled, setGroupingEnabled] = useSyncedState<boolean>('groupingEnabled', false)
 
@@ -28,6 +29,7 @@ function Widget() {
     groupingEnabled,
     counterSizeMode,
     countTarget,
+    stickyTaggerSizeMode,
     setWidgetType,
     setSize,
     setWidth,
@@ -35,7 +37,8 @@ function Widget() {
     setTextColor,
     setGroupingEnabled,
     setCounterSizeMode,
-    setCountTarget
+    setCountTarget,
+    setStickyTaggerSizeMode
   )
 
   if (widgetType === 'point') {
@@ -45,7 +48,7 @@ function Widget() {
   } else if (widgetType === 'organizer') {
     return <OrganizerWidget />
   } else if (widgetType === 'stickyTagger') {
-    return <StickyTaggerWidget />
+    return <StickyTaggerWidget stickyTaggerSizeMode={stickyTaggerSizeMode} />
   }
 }
 

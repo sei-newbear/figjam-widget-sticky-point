@@ -1,7 +1,7 @@
 
 const { widget } = figma
 const { usePropertyMenu } = widget
-import { WidgetType, Size, CounterSizeMode, CountTarget } from '../types'
+import { WidgetType, Size, CounterSizeMode, CountTarget, StickyTaggerSizeMode } from '../types'
 
 export function useWidgetPropertyMenu(
   widgetType: WidgetType,
@@ -12,6 +12,7 @@ export function useWidgetPropertyMenu(
   groupingEnabled: boolean,
   counterSizeMode: CounterSizeMode,
   countTarget: CountTarget,
+  stickyTaggerSizeMode: StickyTaggerSizeMode,
   setWidgetType: (type: WidgetType) => void,
   setSize: (size: Size) => void,
   setWidth: (width: number) => void,
@@ -20,6 +21,7 @@ export function useWidgetPropertyMenu(
   setGroupingEnabled: (enabled: boolean) => void,
   setCounterSizeMode: (mode: CounterSizeMode) => void,
   setCountTarget: (target: CountTarget) => void,
+  setStickyTaggerSizeMode: (mode: StickyTaggerSizeMode) => void,
 ) {
   usePropertyMenu(
     [
@@ -134,6 +136,21 @@ export function useWidgetPropertyMenu(
             },
           ]
         : []),
+      // Sticky Tagger widget用のプロパティ
+      ...(widgetType === 'stickyTagger'
+        ? [
+            {
+              itemType: 'dropdown' as const,
+              propertyName: 'stickyTaggerSizeMode',
+              tooltip: 'Sticky Tagger Size',
+              selectedOption: stickyTaggerSizeMode,
+              options: [
+                { option: 'normal', label: 'Normal' },
+                { option: 'compact', label: 'Compact' },
+              ],
+            },
+          ]
+        : []),
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'widgetType' && propertyValue) {
@@ -150,6 +167,8 @@ export function useWidgetPropertyMenu(
         setCounterSizeMode(propertyValue as CounterSizeMode)
       } else if (propertyName === 'countTarget' && propertyValue) {
         setCountTarget(propertyValue as CountTarget)
+      } else if (propertyName === 'stickyTaggerSizeMode' && propertyValue) {
+        setStickyTaggerSizeMode(propertyValue as StickyTaggerSizeMode)
       } else if (propertyName === 'groupingEnabled') {
         setGroupingEnabled(!groupingEnabled)
       }

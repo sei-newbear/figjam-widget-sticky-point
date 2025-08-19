@@ -2,8 +2,9 @@ const { widget } = figma;
 const { AutoLayout, Text } = widget;
 
 import { useStickyTaggerWidget } from '../hooks/useStickyTaggerWidget';
+import { StickyTaggerSizeMode } from '../types';
 
-export function StickyTaggerWidget() {
+export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeMode: StickyTaggerSizeMode }) {
   const {
     tags,
     showConfirmDelete,
@@ -19,6 +20,44 @@ export function StickyTaggerWidget() {
     cancelBulkDelete,
     tagToDelete,
   } = useStickyTaggerWidget();
+
+  if (stickyTaggerSizeMode === 'compact') {
+    return (
+      <AutoLayout
+        verticalAlignItems={'center'}
+        horizontalAlignItems={'start'}
+        spacing={8}
+        padding={{ vertical: 12, horizontal: 20 }}
+        cornerRadius={8}
+        fill={'#FFFFFF'}
+        stroke={'#E0E0E0'}
+        strokeWidth={1}
+      >
+        {tags.length > 0 ? (
+        <AutoLayout direction="horizontal" spacing={12} horizontalAlignItems="start" wrap>
+          {[...tags].sort((a, b) => a.point - b.point).map((tag) => (
+            <AutoLayout
+              key={tag.id}
+              onClick={() => handleTagClick(tag.templateWidgetId)}
+              fill={tag.backgroundColor || '#007BFF'}
+              cornerRadius={8}
+              padding={{ horizontal: 10, vertical: 5 }}
+              horizontalAlignItems="center"
+              verticalAlignItems="center"
+              hoverStyle={{ opacity: 0.9 }}
+              stroke={'#000000'}
+              strokeWidth={1}
+            >
+              <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{tag.label} ({tag.point})</Text>
+            </AutoLayout>
+          ))}
+        </AutoLayout>
+      ) : (
+        <Text fontSize={14} fill={'#6C757D'}>No templates</Text>
+      )}
+      </AutoLayout>
+    )
+  }
 
   return (
     <AutoLayout

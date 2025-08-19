@@ -3,7 +3,7 @@ const { useSyncedState } = widget;
 
 import { getPointWidgetsFromSceneNodes, applyPointWidgetToStickies, deletePointWidgets } from '../utils/pointWidget';
 import { createTagFromWidget, filterNewWidgets } from '../logic/taggingLogic';
-import { Tag } from '../types';
+import { Tag, StickyTaggerSizeMode } from '../types';
 
 export const useStickyTaggerWidget = () => {
   const [tags, setTags] = useSyncedState<Tag[]>('stickyTaggerTags', []);
@@ -11,6 +11,7 @@ export const useStickyTaggerWidget = () => {
   const [tagIdToDelete, setTagIdToDelete] = useSyncedState<string | null>('tagIdToDelete', null);
   const [showConfirmBulkDelete, setShowConfirmBulkDelete] = useSyncedState('showConfirmBulkDelete', false);
   const [widgetsToDeleteCount, setWidgetsToDeleteCount] = useSyncedState('widgetsToDeleteCount', 0);
+  const [stickyTaggerSizeMode, setStickyTaggerSizeMode] = useSyncedState<StickyTaggerSizeMode>('stickyTaggerSizeMode', 'normal');
 
   // --- Tag Application ---
 
@@ -178,5 +179,7 @@ export const useStickyTaggerWidget = () => {
     handleBulkDelete,
     confirmBulkDelete,
     cancelBulkDelete,
+    stickyTaggerSizeMode,
+    setStickyTaggerSizeMode,
   };
 };
