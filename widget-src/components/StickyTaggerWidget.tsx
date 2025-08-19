@@ -1,5 +1,5 @@
 const { widget } = figma;
-const { AutoLayout, Text } = widget;
+const { AutoLayout, Text, SVG } = widget;
 
 import { useStickyTaggerWidget } from '../hooks/useStickyTaggerWidget';
 import { StickyTaggerSizeMode } from '../types';
@@ -27,12 +27,15 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
         verticalAlignItems={'center'}
         horizontalAlignItems={'start'}
         spacing={8}
-        padding={{ vertical: 12, horizontal: 20 }}
+        padding={{ vertical: 12, left: 8, right: 20 }}
         cornerRadius={8}
         fill={'#FFFFFF'}
         stroke={'#E0E0E0'}
         strokeWidth={1}
       >
+        <AutoLayout horizontalAlignItems="center" spacing={4}>
+          <SVG src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(25 12 12)"><path d="M19.5 10.5L12 3L4.5 10.5V19.5C4.5 20.0523 4.94772 20.5 5.5 20.5H18.5C19.0523 20.5 19.5 20.0523 19.5 19.5V10.5Z" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7.5" r="1.5" fill="#1A1A1A"/></svg>`} width={16} height={16} />
+        </AutoLayout>
         {tags.length > 0 ? (
         <AutoLayout direction="horizontal" spacing={12} horizontalAlignItems="start" wrap>
           {[...tags].sort((a, b) => a.point - b.point).map((tag) => (
