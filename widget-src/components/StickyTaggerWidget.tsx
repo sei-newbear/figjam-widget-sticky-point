@@ -51,7 +51,7 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
               stroke={'#000000'}
               strokeWidth={1}
             >
-              <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{tag.label} ({tag.point})</Text>
+              <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>Tagging ({tag.point})</Text>
             </AutoLayout>
           ))}
         </AutoLayout>
@@ -151,7 +151,7 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
                 stroke={'#000000'}
                 strokeWidth={1}
               >
-                <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{tag.label} ({tag.point})</Text>
+                <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>Tagging ({tag.point})</Text>
               </AutoLayout>
               <AutoLayout
                 onClick={() => handleDeleteTag(tag.id)}
