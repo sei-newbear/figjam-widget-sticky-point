@@ -12,21 +12,3 @@ export type Tag = {
   backgroundColor?: string;
   textColor?: string;
 };
-
-export type PointWidget = WidgetNode & {
-  widgetId: string;
-  name: string;
-  getWidgetProperty: (name: string) => any;
-};
-
-export type GroupingRule = {
-  pointRange: [number, number];
-  color: string;
-};
-
-export type GroupingResult = {
-  groupName: string;
-  color: string;
-  widgets: WidgetNode[];
-  totalPoints: number;
-};
