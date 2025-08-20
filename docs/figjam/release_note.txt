@@ -1,3 +1,11 @@
+## v15
+Sticky Tagger UI Updates
+
+This update includes minor UI improvements for the Sticky Tagger.
+
+- Update - Simplified Tagging Button: The button for applying tags now consistently displays "Tagging" to provide a more uniform experience across different tags.
+- New - Informative Tooltip: A tooltip has been added to the tag application area to better guide users on how to apply tags and switch between modes.
+
 ## v14
 New Compact Mode for Sticky Tagger
 
