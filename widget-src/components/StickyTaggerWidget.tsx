@@ -51,7 +51,14 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
               stroke={'#000000'}
               strokeWidth={1}
             >
-              <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>Tagging ({tag.point})</Text>
+              <AutoLayout horizontalAlignItems="center" verticalAlignItems="center" spacing={4}>
+                <SVG
+                  width={16}
+                  height={16}
+                  src={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="${tag.textColor || '#FFFFFF'}" stroke-width="2"/><path d="M12 7V17M7 12H17" stroke="${tag.textColor || '#FFFFFF'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
+                />
+                <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{tag.point}</Text>
+              </AutoLayout>
             </AutoLayout>
           ))}
         </AutoLayout>
@@ -151,7 +158,14 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
                 stroke={'#000000'}
                 strokeWidth={1}
               >
-                <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>Tagging ({tag.point})</Text>
+                <AutoLayout horizontalAlignItems="center" verticalAlignItems="center" spacing={4}>
+                  <SVG
+                    width={16}
+                    height={16}
+                    src={`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="${tag.textColor || '#FFFFFF'}" stroke-width="2"/><path d="M12 7V17M7 12H17" stroke="${tag.textColor || '#FFFFFF'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
+                  />
+                  <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{tag.point}</Text>
+                </AutoLayout>
               </AutoLayout>
               <AutoLayout
                 onClick={() => handleDeleteTag(tag.id)}
