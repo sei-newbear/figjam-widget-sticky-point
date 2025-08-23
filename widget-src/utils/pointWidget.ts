@@ -1,4 +1,4 @@
-import { PointTemplate, Size } from '../types';
+import { PointTemplate } from '../types';
 import { PointWidget } from '../components/PointWidget';
 
 /**

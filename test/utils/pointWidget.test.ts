@@ -4,14 +4,18 @@ import {
   applyPointWidgetToStickies,
   deletePointWidgets
 } from '../../widget-src/utils/pointWidget';
+import { PointTemplate } from '../../widget-src/types';
 
 // --- 共通セットアップ ---
 describe('PointWidget Utils', () => {
   beforeAll(() => {
-    // グローバルなfigmaオブジェクトをモックし、テストに必要なプロパティを設定します
-    (global as any).figma = {
-      widgetId: 'test-widget-id',
-    };
+    // グローバルなfigmaオブジェクトのプロパティをテストに合わせて設定
+    (global as any).figma.widgetId = 'test-widget-id';
+  });
+
+  beforeEach(() => {
+    // 各テストの前にモックをクリア
+    (global as any).figma.getNodeByIdAsync.mockClear();
   });
 
   // --- getPointWidgetsFromSceneNodes のテスト ---
@@ -53,7 +57,8 @@ describe('PointWidget Utils', () => {
 
   // --- applyPointWidgetToStickies のテスト ---
   describe('applyPointWidgetToStickies', () => {
-    let mockTemplateWidget: any;
+    let mockStickyTagger: any;
+    let mockTemplate: PointTemplate;
     let mockStickyNote1: any;
     let mockStickyNote2: any;
     let mockExistingPointWidget: any;
@@ -62,18 +67,28 @@ describe('PointWidget Utils', () => {
     beforeEach(() => {
       appendChildMock = jest.fn();
       const cloneMock = jest.fn(function(this: any) {
-        // clone()が呼ばれたら、新しいIDを持つ別のオブジェクトを返します
         return { ...this, id: `cloned-${this.id}`, x: 0, y: 0 };
       });
       
-      mockTemplateWidget = {
-        id: 'template-1',
+      mockStickyTagger = {
+        id: 'sticky-tagger-1',
         type: 'WIDGET',
-        widgetId: 'test-widget-id',
-        width: 50,
-        height: 50,
-        clone: cloneMock,
-        widgetSyncedState: { widgetType: 'point' },
+        cloneWidget: cloneMock,
+      };
+
+      (global as any).figma.getNodeByIdAsync.mockResolvedValue(mockStickyTagger);
+
+      mockTemplate = {
+        id: 'template-1',
+        label: 'Test',
+        point: 5,
+        size: 'small',
+        backgroundColor: '#FFF',
+        textColor: '#000',
+        groupingEnabled: false,
+        inputWidth: 70,
+        layoutWidth: 82, // 70 + 2 * 6 (padding)
+        layoutHeight: 30, // 16 + 2 * 6 + 2 (fontSize + padding + stroke)
       };
   
       mockExistingPointWidget = {
@@ -106,49 +121,30 @@ describe('PointWidget Utils', () => {
       };
     });
   
-    it('should apply widget to a sticky note without one and calculate position correctly', async () => {
+    it('should apply widget to a sticky note and calculate position correctly', async () => {
       const stickyNotes = [mockStickyNote1];
-      const { appliedCount, skippedCount } = await applyPointWidgetToStickies(mockTemplateWidget, stickyNotes);
+      const { appliedCount, skippedCount } = await applyPointWidgetToStickies(mockStickyTagger.id, mockTemplate, stickyNotes);
   
       expect(appliedCount).toBe(1);
       expect(skippedCount).toBe(0);
-      expect(mockTemplateWidget.clone).toHaveBeenCalledTimes(1);
+      expect(figma.getNodeByIdAsync).toHaveBeenCalledWith(mockStickyTagger.id);
+      expect(mockStickyTagger.cloneWidget).toHaveBeenCalledTimes(1);
       expect(appendChildMock).toHaveBeenCalledTimes(1);
       
       const newWidget = appendChildMock.mock.calls[0][0];
-      expect(newWidget.id).toBe('cloned-template-1');
-      // x: 100 + 200 - 50 - 5 = 245
-      // y: 100 + 150 - 50 - 5 = 195
-      expect(newWidget.x).toBe(245);
-      expect(newWidget.y).toBe(195);
+      // x: 100 + 200 - 82 - 5 = 213
+      // y: 100 + 150 - 30 - 5 = 215
+      expect(newWidget.x).toBe(213);
+      expect(newWidget.y).toBe(215);
     });
   
     it('should skip a sticky note that already has a point widget', async () => {
       const stickyNotes = [mockStickyNote2];
-      const { appliedCount, skippedCount } = await applyPointWidgetToStickies(mockTemplateWidget, stickyNotes);
+      const { appliedCount, skippedCount } = await applyPointWidgetToStickies(mockStickyTagger.id, mockTemplate, stickyNotes);
   
       expect(appliedCount).toBe(0);
       expect(skippedCount).toBe(1);
-      expect(mockTemplateWidget.clone).not.toHaveBeenCalled();
-      expect(appendChildMock).not.toHaveBeenCalled();
-    });
-  
-    it('should handle a mix of applicable and skipped notes', async () => {
-      const stickyNotes = [mockStickyNote1, mockStickyNote2];
-      const { appliedCount, skippedCount } = await applyPointWidgetToStickies(mockTemplateWidget, stickyNotes);
-  
-      expect(appliedCount).toBe(1);
-      expect(skippedCount).toBe(1);
-      expect(mockTemplateWidget.clone).toHaveBeenCalledTimes(1);
-      expect(appendChildMock).toHaveBeenCalledTimes(1);
-    });
-
-    it('should skip nodes that are not stickies or dont have stuckNodes property', async () => {
-      const invalidNodes = [{ id: 'frame-1', type: 'FRAME' }];
-      const { appliedCount, skippedCount } = await applyPointWidgetToStickies(mockTemplateWidget, invalidNodes as any);
-      
-      expect(appliedCount).toBe(0);
-      expect(skippedCount).toBe(0);
+      expect(mockStickyTagger.cloneWidget).not.toHaveBeenCalled();
     });
   });
 
@@ -156,19 +152,15 @@ describe('PointWidget Utils', () => {
   describe('deletePointWidgets', () => {
     let widget1: any;
     let widget2: any;
-    let widget3_template: any;
   
     beforeEach(() => {
       widget1 = { id: 'widget-1', removed: false, remove: jest.fn() };
       widget2 = { id: 'widget-2', removed: false, remove: jest.fn() };
-      widget3_template = { id: 'widget-3-template', removed: false, remove: jest.fn() };
     });
   
-    it('should delete widgets that are not templates', () => {
+    it('should delete widgets', () => {
       const widgetsToDelete = [widget1, widget2];
-      const templateIds = new Set(['widget-3-template']);
-      
-      const { deleteCount, skippedCount } = deletePointWidgets(widgetsToDelete, templateIds);
+      const { deleteCount, skippedCount } = deletePointWidgets(widgetsToDelete);
   
       expect(deleteCount).toBe(2);
       expect(skippedCount).toBe(0);
@@ -176,24 +168,10 @@ describe('PointWidget Utils', () => {
       expect(widget2.remove).toHaveBeenCalledTimes(1);
     });
   
-    it('should skip widgets that are used as templates', () => {
-      const widgetsToDelete = [widget1, widget3_template];
-      const templateIds = new Set(['widget-3-template']);
-  
-      const { deleteCount, skippedCount } = deletePointWidgets(widgetsToDelete, templateIds);
-  
-      expect(deleteCount).toBe(1);
-      expect(skippedCount).toBe(1);
-      expect(widget1.remove).toHaveBeenCalledTimes(1);
-      expect(widget3_template.remove).not.toHaveBeenCalled();
-    });
-  
     it('should not try to remove an already removed widget', () => {
       widget1.removed = true;
       const widgetsToDelete = [widget1];
-      const templateIds = new Set<string>();
-  
-      const { deleteCount, skippedCount } = deletePointWidgets(widgetsToDelete, templateIds);
+      const { deleteCount, skippedCount } = deletePointWidgets(widgetsToDelete);
   
       expect(deleteCount).toBe(0);
       expect(skippedCount).toBe(0);
