@@ -119,7 +119,7 @@ export const applyPointWidgetToStickies = async (
  */
 export const deletePointWidgets = (
   widgetsToDelete: readonly WidgetNode[]
-): { deleteCount: number; skippedCount: 0 } => {
+): number => {
   let deleteCount = 0;
 
   for (const widget of widgetsToDelete) {
@@ -129,5 +129,5 @@ export const deletePointWidgets = (
     }
   }
 
-  return { deleteCount, skippedCount: 0 };
+  return deleteCount;
 };
