@@ -1,14 +1,17 @@
 {
   "extends": "../widget-src/tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "types": ["jest", "node"]
+    "module": "commonjs"
   },
   "include": [
     "./**/*.ts",
     "./logic/**/*.ts",
     "../widget-src/**/*.ts",
     "../widget-src/**/*.tsx",
-    "../node_modules/@figma/plugin-typings/index.d.ts"
+    "../node_modules/@figma/plugin-typings/index.d.ts",
+    "../node_modules/@figma/widget-typings/index.d.ts"
   ]
 }
+
+
+

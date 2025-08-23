@@ -45,7 +45,7 @@ export function PointWidget({ size, backgroundColor, textColor, width, groupingE
       <Input
         value={point.toString()}
         placeholder="0"
-        onTextEditEnd={(e) => {
+        onTextEditEnd={(e: TextEditEvent) => {
           const newValue = parseFloat(e.characters)
           if (!isNaN(newValue)) {
             setPoint(newValue)
