@@ -38,23 +38,40 @@ export const filterNewTemplates = (
 ): { newWidgets: WidgetNode[], alreadyRegisteredCount: number } => {
   const newWidgets: WidgetNode[] = [];
   let alreadyRegisteredCount = 0;
+  const addedSignatures = new Set<string>();
 
   for (const widget of widgetsToRegister) {
-    const isAlreadyRegistered = existingTemplates.some(template => {
-      return (
-        template.label === (widget.widgetSyncedState.label as string || "Point") &&
-        template.point === ((widget.widgetSyncedState.point && typeof widget.widgetSyncedState.point === 'number') ? widget.widgetSyncedState.point : 0) &&
-        template.backgroundColor === (widget.widgetSyncedState.backgroundColor as string) &&
-        template.textColor === (widget.widgetSyncedState.textColor as string) &&
-        template.size === (widget.widgetSyncedState.size as Size || 'small') &&
-        template.groupingEnabled === (widget.widgetSyncedState.groupingEnabled as boolean || false) &&
-        template.inputWidth === (widget.widgetSyncedState.width as number)
-      );
+    const signature = JSON.stringify({
+      label: widget.widgetSyncedState.label as string || "Point",
+      point: (widget.widgetSyncedState.point && typeof widget.widgetSyncedState.point === 'number') ? widget.widgetSyncedState.point : 0,
+      backgroundColor: widget.widgetSyncedState.backgroundColor as string,
+      textColor: widget.widgetSyncedState.textColor as string,
+      size: widget.widgetSyncedState.size as Size || 'small',
+      groupingEnabled: widget.widgetSyncedState.groupingEnabled as boolean || false,
+      inputWidth: widget.widgetSyncedState.width as number,
+      layoutWidth: widget.width,
+      layoutHeight: widget.height,
     });
 
-    if (isAlreadyRegistered) {
+    const isAlreadyInExisting = existingTemplates.some(template => {
+      const existingSignature = JSON.stringify({
+        label: template.label,
+        point: template.point,
+        backgroundColor: template.backgroundColor,
+        textColor: template.textColor,
+        size: template.size,
+        groupingEnabled: template.groupingEnabled,
+        inputWidth: template.inputWidth,
+        layoutWidth: template.layoutWidth,
+        layoutHeight: template.layoutHeight,
+      });
+      return signature === existingSignature;
+    });
+
+    if (isAlreadyInExisting || addedSignatures.has(signature)) {
       alreadyRegisteredCount++;
     } else {
+      addedSignatures.add(signature);
       newWidgets.push(widget);
     }
   }
