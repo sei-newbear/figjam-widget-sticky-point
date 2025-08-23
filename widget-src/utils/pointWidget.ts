@@ -72,12 +72,6 @@ export const applyPointWidgetToStickies = async (
   }
   const stickyTagger = stickyTaggerNode as WidgetNode;
 
-  const sizeConfig: Record<Size, { height: number, padding: number }> = {
-    small: { height: 16 + (6 * 2) + 2, padding: 6 },   // fontSize + (padding * 2) + (strokeWidth * 2)
-    medium: { height: 24 + (8 * 2) + 2, padding: 8 },  // fontSize + (padding * 2) + (strokeWidth * 2)
-    large: { height: 32 + (12 * 2) + 2, padding: 12 }, // fontSize + (padding * 2) + (strokeWidth * 2)
-  };
-
   for (const stickyNote of stickyNotes) {
     // `stuckNodes` プロパティを持つかチェックし、型を絞り込みます
     if (!('stuckNodes' in stickyNote) || !(stickyNote.type === 'STICKY')) {
@@ -94,14 +88,14 @@ export const applyPointWidgetToStickies = async (
     const newPointWidget = stickyTagger.cloneWidget({
       widgetComponent: PointWidget,
       widgetType: 'point',
-      ...template
+      ...template,
+      width: template.inputWidth, // Map inputWidth to width prop
     });
 
     // 付箋の右下に配置するための座標を計算
     const INSET_OFFSET = 5; // Offset from right and bottom edges
-    const config = sizeConfig[template.size];
-    const widgetWidth = template.width + 2 * config.padding;
-    const widgetHeight = config.height;
+    const widgetWidth = template.layoutWidth;
+    const widgetHeight = template.layoutHeight;
 
     // 付箋と同じ親にクローンされたウィジェットを追加
     if (stickyNote.parent) {
