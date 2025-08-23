@@ -1,3 +1,6 @@
+import { PointTemplate, Size } from '../types';
+import { PointWidget } from '../components/PointWidget';
+
 /**
  * 指定されたノードがこのウィジェットの「Point Widget」であるかを判定する型ガード関数。
  */
@@ -49,16 +52,31 @@ function getPointWidgets(node: SceneNode): WidgetNode[] {
 /**
  * 指定された付箋にテンプレートウィジェットを複製して適用します。
  * 既にウィジェットが適用されている付箋はスキップされます。
- * @param templateWidget - テンプレートとして使用するPoint Widget。
+ * @param stickyTaggerWidgetId - クローン元のStickyTaggerWidgetのID
+ * @param template - 適用するPoint Template
  * @param stickyNotes - 適用対象の付箋ノードの配列。
  * @returns 適用された数とスキップされた数。
  */
 export const applyPointWidgetToStickies = async (
-  templateWidget: WidgetNode,
+  stickyTaggerWidgetId: string,
+  template: PointTemplate,
   stickyNotes: readonly SceneNode[]
 ): Promise<{ appliedCount: number; skippedCount: number }> => {
   let appliedCount = 0;
   let skippedCount = 0;
+
+  const stickyTaggerNode = await figma.getNodeByIdAsync(stickyTaggerWidgetId);
+  if (!stickyTaggerNode || stickyTaggerNode.type !== 'WIDGET') {
+    figma.notify('StickyTagger widget not found.');
+    return { appliedCount: 0, skippedCount: stickyNotes.length };
+  }
+  const stickyTagger = stickyTaggerNode as WidgetNode;
+
+  const sizeConfig: Record<Size, { height: number, padding: number }> = {
+    small: { height: 16 + (6 * 2) + 2, padding: 6 },   // fontSize + (padding * 2) + (strokeWidth * 2)
+    medium: { height: 24 + (8 * 2) + 2, padding: 8 },  // fontSize + (padding * 2) + (strokeWidth * 2)
+    large: { height: 32 + (12 * 2) + 2, padding: 12 }, // fontSize + (padding * 2) + (strokeWidth * 2)
+  };
 
   for (const stickyNote of stickyNotes) {
     // `stuckNodes` プロパティを持つかチェックし、型を絞り込みます
@@ -73,20 +91,25 @@ export const applyPointWidgetToStickies = async (
       continue;
     }
 
-    const clonedWidget = templateWidget.clone();
+    const newPointWidget = stickyTagger.cloneWidget({
+      widgetComponent: PointWidget,
+      widgetType: 'point',
+      ...template
+    });
 
     // 付箋の右下に配置するための座標を計算
     const INSET_OFFSET = 5; // Offset from right and bottom edges
-    const widgetWidth = clonedWidget.width;
-    const widgetHeight = clonedWidget.height;
-    
+    const config = sizeConfig[template.size];
+    const widgetWidth = template.width + 2 * config.padding;
+    const widgetHeight = config.height;
+
     // 付箋と同じ親にクローンされたウィジェットを追加
     if (stickyNote.parent) {
-      stickyNote.parent.appendChild(clonedWidget);
+      stickyNote.parent.appendChild(newPointWidget);
     }
 
-    clonedWidget.x = stickyNote.x + stickyNote.width - widgetWidth - INSET_OFFSET;
-    clonedWidget.y = stickyNote.y + stickyNote.height - widgetHeight - INSET_OFFSET;
+    newPointWidget.x = stickyNote.x + stickyNote.width - widgetWidth - INSET_OFFSET;
+    newPointWidget.y = stickyNote.y + stickyNote.height - widgetHeight - INSET_OFFSET;
 
     appliedCount++;
   }
@@ -94,30 +117,23 @@ export const applyPointWidgetToStickies = async (
   return { appliedCount, skippedCount };
 };
 
+
 /**
- * 指定されたPoint Widgetのリストから、テンプレートとして使用されているものを除外して削除します。
+ * 指定されたPoint Widgetのリストを削除します。
  * @param widgetsToDelete - 削除候補のPoint Widgetの配列。
- * @param templateIds - テンプレートとして登録されているウィジェットIDのSet。
- * @returns 削除された数とスキップされた数。
+ * @returns 削除された数。
  */
 export const deletePointWidgets = (
-  widgetsToDelete: readonly WidgetNode[],
-  templateIds: Set<string>
-): { deleteCount: number; skippedCount: number } => {
+  widgetsToDelete: readonly WidgetNode[]
+): { deleteCount: number; skippedCount: 0 } => {
   let deleteCount = 0;
-  let skippedCount = 0;
 
   for (const widget of widgetsToDelete) {
-    if (templateIds.has(widget.id)) {
-      skippedCount++;
-      continue;
-    }
-
     if (!widget.removed) {
       widget.remove();
       deleteCount++;
     }
   }
 
-  return { deleteCount, skippedCount };
+  return { deleteCount, skippedCount: 0 };
 };

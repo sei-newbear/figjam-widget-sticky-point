@@ -1,21 +1,22 @@
 const { widget } = figma;
-const { useSyncedState } = widget;
+const { useSyncedState, useWidgetNodeId } = widget;
 
 import { getPointWidgetsFromSceneNodes, applyPointWidgetToStickies, deletePointWidgets } from '../utils/pointWidget';
-import { createTagFromWidget, filterNewWidgets } from '../logic/taggingLogic';
-import { Tag, StickyTaggerSizeMode } from '../types';
+import { createPointTemplateFromWidget, filterNewTemplates } from '../logic/taggingLogic';
+import { PointTemplate, StickyTaggerSizeMode } from '../types';
 
 export const useStickyTaggerWidget = () => {
-  const [tags, setTags] = useSyncedState<Tag[]>('stickyTaggerTags', []);
+  const widgetId = useWidgetNodeId();
+  const [templates, setTemplates] = useSyncedState<PointTemplate[]>('stickyTaggerTemplates', []);
   const [showConfirmDelete, setShowConfirmDelete] = useSyncedState<boolean>('showConfirmDelete', false);
-  const [tagIdToDelete, setTagIdToDelete] = useSyncedState<string | null>('tagIdToDelete', null);
+  const [templateIdToDelete, setTemplateIdToDelete] = useSyncedState<string | null>('templateIdToDelete', null);
   const [showConfirmBulkDelete, setShowConfirmBulkDelete] = useSyncedState('showConfirmBulkDelete', false);
   const [widgetsToDeleteCount, setWidgetsToDeleteCount] = useSyncedState('widgetsToDeleteCount', 0);
   const [stickyTaggerSizeMode, setStickyTaggerSizeMode] = useSyncedState<StickyTaggerSizeMode>('stickyTaggerSizeMode', 'normal');
 
   // --- Tag Application ---
 
-  const handleTagClick = async (templateWidgetId: string) => {
+  const handleTemplateClick = async (template: PointTemplate) => {
     const selection = figma.currentPage.selection;
     const stickyNotes = selection.filter(node => node.type === 'STICKY');
 
@@ -24,16 +25,9 @@ export const useStickyTaggerWidget = () => {
       return;
     }
 
-    const templateWidget = await figma.getNodeByIdAsync(templateWidgetId);
+    const { appliedCount, skippedCount } = await applyPointWidgetToStickies(widgetId, template, stickyNotes);
 
-    if (!templateWidget || templateWidget.type !== 'WIDGET' || templateWidget.widgetId !== figma.widgetId) {
-      figma.notify('Template widget not found or invalid.');
-      return;
-    }
-
-    const { appliedCount, skippedCount } = await applyPointWidgetToStickies(templateWidget, stickyNotes);
-
-    // Notification logic remains in the hook as it's a UI concern.
+    // Notification logic
     let message = '';
     if (appliedCount > 0) {
       message += `Applied tags to ${appliedCount} sticky note(s).`;
@@ -65,18 +59,18 @@ export const useStickyTaggerWidget = () => {
       return;
     }
 
-    const { newWidgets, alreadyRegisteredCount } = filterNewWidgets(widgetsToRegister, tags);
+    const { newWidgets, alreadyRegisteredCount } = filterNewTemplates(widgetsToRegister, templates);
     
-    const newTags = newWidgets.map(createTagFromWidget);
+    const newTemplates = newWidgets.map(createPointTemplateFromWidget);
 
-    if (newTags.length > 0) {
-      setTags([...tags, ...newTags]);
+    if (newTemplates.length > 0) {
+      setTemplates([...templates, ...newTemplates]);
     }
     
     // Notification logic
     let message = '';
-    if (newTags.length > 0) {
-        message += `${newTags.length} new template(s) registered.`;
+    if (newTemplates.length > 0) {
+        message += `${newTemplates.length} new template(s) registered.`;
     }
     if (alreadyRegisteredCount > 0) {
         if (message) message += ' ';
@@ -88,26 +82,26 @@ export const useStickyTaggerWidget = () => {
     figma.notify(message);
   };
 
-  // --- Tag Deletion ---
+  // --- Template Deletion ---
 
-  const handleDeleteTag = (tagId: string) => {
-    setTagIdToDelete(tagId);
+  const handleDeleteTemplate = (templateId: string) => {
+    setTemplateIdToDelete(templateId);
     setShowConfirmDelete(true);
   };
 
   const confirmDelete = () => {
-    if (tagIdToDelete) {
-      setTags(tags.filter(tag => tag.id !== tagIdToDelete));
-      figma.notify('Tag deleted.');
+    if (templateIdToDelete) {
+      setTemplates(templates.filter(template => template.id !== templateIdToDelete));
+      figma.notify('Template deleted.');
     }
     setShowConfirmDelete(false);
-    setTagIdToDelete(null);
+    setTemplateIdToDelete(null);
   };
 
   const cancelDelete = () => {
-    figma.notify('Tag deletion cancelled.');
+    figma.notify('Template deletion cancelled.');
     setShowConfirmDelete(false);
-    setTagIdToDelete(null);
+    setTemplateIdToDelete(null);
   };
 
   // --- Bulk Widget Deletion ---
@@ -131,24 +125,14 @@ export const useStickyTaggerWidget = () => {
   const confirmBulkDelete = () => {
     const selection = figma.currentPage.selection;
     const pointWidgetsToDelete = getPointWidgetsFromSceneNodes(selection);
-    const templateIds = new Set(tags.map(tag => tag.templateWidgetId));
 
-    const { deleteCount, skippedCount } = deletePointWidgets(pointWidgetsToDelete, templateIds);
+    const { deleteCount } = deletePointWidgets(pointWidgetsToDelete);
 
     // Notification logic
-    let message = '';
     if (deleteCount > 0) {
-      message += `Successfully deleted ${deleteCount} 'Point' widget(s).`;
-    }
-    if (skippedCount > 0) {
-      if (message) message += ' ';
-      message += `Skipped ${skippedCount} widget(s) used as templates.`;
-    }
-
-    if (message) {
-      figma.notify(message);
-    } else if (pointWidgetsToDelete.length > 0) {
-      figma.notify('No widgets to delete. Selected items are registered templates.');
+      figma.notify(`Successfully deleted ${deleteCount} 'Point' widget(s).`);
+    } else {
+      figma.notify('No widgets were deleted.');
     }
     
     setShowConfirmBulkDelete(false);
@@ -163,16 +147,16 @@ export const useStickyTaggerWidget = () => {
 
   // --- Returned State and Functions ---
 
-  const tagToDelete = tagIdToDelete ? tags.find(tag => tag.id === tagIdToDelete) : null;
+  const templateToDelete = templateIdToDelete ? templates.find(t => t.id === templateIdToDelete) : null;
 
   return {
-    tags,
+    templates,
     showConfirmDelete,
-    tagToDelete,
+    templateToDelete,
     showConfirmBulkDelete,
     widgetsToDeleteCount,
-    handleTagClick,
-    handleDeleteTag,
+    handleTemplateClick,
+    handleDeleteTemplate,
     confirmDelete,
     cancelDelete,
     handleRegisterTemplate,
