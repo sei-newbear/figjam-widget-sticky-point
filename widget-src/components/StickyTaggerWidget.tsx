@@ -7,19 +7,19 @@ import { getTagIconSvg } from '../utils/icons';
 
 export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeMode: StickyTaggerSizeMode }) {
   const {
-    tags,
+    templates,
     showConfirmDelete,
     showConfirmBulkDelete,
     widgetsToDeleteCount,
-    handleTagClick,
-    handleDeleteTag,
+    handleTemplateClick,
+    handleDeleteTemplate,
     confirmDelete,
     cancelDelete,
     handleRegisterTemplate,
     handleBulkDelete,
     confirmBulkDelete,
     cancelBulkDelete,
-    tagToDelete,
+    templateToDelete,
   } = useStickyTaggerWidget();
 
   if (stickyTaggerSizeMode === 'compact') {
@@ -37,13 +37,13 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
         <AutoLayout tooltip="Click a tag to apply. Switch to normal mode to manage tags." horizontalAlignItems="center" spacing={4}>
           <SVG src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(25 12 12)"><path d="M19.5 10.5L12 3L4.5 10.5V19.5C4.5 20.0523 4.94772 20.5 5.5 20.5H18.5C19.0523 20.5 19.5 20.0523 19.5 19.5V10.5Z" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7.5" r="1.5" fill="#1A1A1A"/></svg>`} width={16} height={16} />
         </AutoLayout>
-        {tags.length > 0 ? (
+        {templates.length > 0 ? (
         <AutoLayout direction="horizontal" spacing={12} horizontalAlignItems="start" wrap>
-          {[...tags].sort((a, b) => a.point - b.point).map((tag) => (
+          {[...templates].sort((a, b) => a.point - b.point).map((template) => (
             <AutoLayout
-              key={tag.id}
-              onClick={() => handleTagClick(tag.templateWidgetId)}
-              fill={tag.backgroundColor || '#007BFF'}
+              key={template.id}
+              onClick={() => handleTemplateClick(template)}
+              fill={template.backgroundColor || '#007BFF'}
               cornerRadius={8}
               padding={{ horizontal: 10, vertical: 5 }}
               horizontalAlignItems="center"
@@ -56,9 +56,9 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
                 <SVG
                   width={16}
                   height={16}
-                  src={getTagIconSvg(tag.textColor || '#FFFFFF')}
+                  src={getTagIconSvg(template.textColor || '#FFFFFF')}
                 />
-                <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{tag.point}</Text>
+                <Text fill={template.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{template.point}</Text>
               </AutoLayout>
             </AutoLayout>
           ))}
@@ -102,7 +102,7 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
             <Text fill="#FFFFFF" fontSize={14} fontWeight={600}>Add to Palette</Text>
           </AutoLayout>
           <AutoLayout
-            tooltip="Adds selected 'Point' widgets to the palette. You can select multiple widgets or a section. Important: The original widget is used as the template, so if you delete it from the canvas, this tag will stop working."
+            tooltip="Adds selected 'Point' widgets to the palette. You can select multiple widgets or a section."
             width={16}
             height={16}
             cornerRadius={999}
@@ -139,18 +139,18 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
         </AutoLayout>
       </AutoLayout>
 
-      {tags.length > 0 ? (
+      {templates.length > 0 ? (
         <AutoLayout direction="vertical" spacing={8} width="fill-parent" horizontalAlignItems="start" padding={{ left: 8 }}>
-          {[...tags].sort((a, b) => a.point - b.point).map((tag) => (
+          {[...templates].sort((a, b) => a.point - b.point).map((template) => (
             <AutoLayout
-              key={tag.id}
+              key={template.id}
               direction="horizontal"
               verticalAlignItems="center"
               spacing={4}
             >
               <AutoLayout
-                onClick={() => handleTagClick(tag.templateWidgetId)}
-                fill={tag.backgroundColor || '#007BFF'}
+                onClick={() => handleTemplateClick(template)}
+                fill={template.backgroundColor || '#007BFF'}
                 cornerRadius={8}
                 padding={{ horizontal: 10, vertical: 5 }}
                 horizontalAlignItems="center"
@@ -163,13 +163,13 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
                   <SVG
                     width={16}
                     height={16}
-                    src={getTagIconSvg(tag.textColor || '#FFFFFF')}
+                    src={getTagIconSvg(template.textColor || '#FFFFFF')}
                   />
-                  <Text fill={tag.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{tag.point}</Text>
+                  <Text fill={template.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{template.point}</Text>
                 </AutoLayout>
               </AutoLayout>
               <AutoLayout
-                onClick={() => handleDeleteTag(tag.id)}
+                onClick={() => handleDeleteTemplate(template.id)}
                 fill={'#DC3545'}
                 cornerRadius={999}
                 width={20}
@@ -206,7 +206,7 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
           <Text fill={'#FFFFFF'} fontSize={14} fontWeight={600}>Bulk Delete Tags</Text>
         </AutoLayout>
         <AutoLayout
-          tooltip="Deletes all 'Point' widgets found within the current selection. Widgets registered as templates in the palette will be skipped."
+          tooltip="Deletes all 'Point' widgets found within the current selection."
           width={16}
           height={16}
           cornerRadius={999}
@@ -239,7 +239,7 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
             width={220}
           >
             <Text fontSize={18} fontWeight={700}>Confirm Deletion</Text>
-            <Text fontSize={14} width={220} horizontalAlignText="center">{tagToDelete ? `Are you sure you want to delete "${tagToDelete.label}" (${tagToDelete.point} pts)?` : ''}</Text>
+            <Text fontSize={14} width={220} horizontalAlignText="center">{templateToDelete ? `Are you sure you want to delete "${templateToDelete.label}" (${templateToDelete.point} pts)?` : ''}</Text>
             <AutoLayout direction="horizontal" spacing={12}>
               <AutoLayout
                 onClick={confirmDelete}
