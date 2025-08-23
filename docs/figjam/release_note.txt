@@ -1,3 +1,14 @@
+## v16
+Improvements and Refinements
+
+This update brings several improvements to the Sticky Tagger widget, focusing on user experience and template management.
+
+- UI Update - Enhanced Tag Display: The "Tagging" text has been removed from the tag buttons, and a new icon is now displayed alongside the point value for a cleaner look.
+- Improvement - Simplified Tooltips: Tooltips for "Add to Palette" and "Bulk Delete Tags" have been streamlined for clarity.
+- Improvement - Smarter Template Registration: When adding new templates to the palette, the system now intelligently identifies and skips exact duplicates based on their properties (point value, colors, size, etc.), preventing redundant entries.
+- Improved Template Management: Original template widgets can now be safely deleted from the canvas. Previously, these were required to remain due to cloning dependencies, but this update removes that restriction.
+- Bug Fix - Bulk Delete Target: Fixed an issue where the target of the bulk deletion function could change if a different selection was made during the confirmation dialog.
+
 ## v15
 Sticky Tagger UI Updates
 

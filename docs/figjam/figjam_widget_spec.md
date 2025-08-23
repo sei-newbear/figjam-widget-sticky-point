@@ -22,6 +22,6 @@ This mode allows you to efficiently manage the grouping of selected Point Widget
 **Sticky Tagger Mode**
 This mode introduces a powerful workflow for rapidly applying points to multiple sticky notes. It allows you to create a palette of pre-configured "Point" widgets (tags) that can be quickly applied.
 
-- **Tag Palette**: You can register any existing "Point" widget from your board as a "tag" in the Sticky Tagger's palette. This saves the point value, color, and size of the original widget as a reusable template.
+- **Tag Palette**: You can register any existing "Point" widget from your board as a "template" in the Sticky Tagger's palette. This saves the point value, color, and size of the widget as a reusable template. The system intelligently skips exact duplicates based on their properties. Once registered, the original widget can be safely deleted from the canvas as the template is stored independently.
 - **Apply Tags**: After building your palette, simply select one or more sticky notes on the board and click a tag from the palette. A copy of the template widget will be instantly attached to each selected sticky note.
-- **Bulk Deletion**: The tool also helps with cleanup. You can select a group of objects and use the bulk delete feature to remove all "Point" widgets within that selection. To prevent accidental loss of your templates, any widget registered in the palette will be automatically skipped during deletion. 
+- **Bulk Deletion**: The tool also helps with cleanup. You can select a group of objects and use the bulk delete feature to remove all "Point" widgets within that selection. 
