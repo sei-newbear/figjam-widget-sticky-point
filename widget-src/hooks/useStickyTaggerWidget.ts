@@ -126,7 +126,7 @@ export const useStickyTaggerWidget = () => {
     const selection = figma.currentPage.selection;
     const pointWidgetsToDelete = getPointWidgetsFromSceneNodes(selection);
 
-    const { deleteCount } = deletePointWidgets(pointWidgetsToDelete);
+    const deleteCount = deletePointWidgets(pointWidgetsToDelete);
 
     // Notification logic
     if (deleteCount > 0) {

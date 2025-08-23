@@ -160,10 +160,9 @@ describe('PointWidget Utils', () => {
   
     it('should delete widgets', () => {
       const widgetsToDelete = [widget1, widget2];
-      const { deleteCount, skippedCount } = deletePointWidgets(widgetsToDelete);
+      const deleteCount = deletePointWidgets(widgetsToDelete);
   
       expect(deleteCount).toBe(2);
-      expect(skippedCount).toBe(0);
       expect(widget1.remove).toHaveBeenCalledTimes(1);
       expect(widget2.remove).toHaveBeenCalledTimes(1);
     });
@@ -171,10 +170,9 @@ describe('PointWidget Utils', () => {
     it('should not try to remove an already removed widget', () => {
       widget1.removed = true;
       const widgetsToDelete = [widget1];
-      const { deleteCount, skippedCount } = deletePointWidgets(widgetsToDelete);
+      const deleteCount = deletePointWidgets(widgetsToDelete);
   
       expect(deleteCount).toBe(0);
-      expect(skippedCount).toBe(0);
       expect(widget1.remove).not.toHaveBeenCalled();
     });
   });
