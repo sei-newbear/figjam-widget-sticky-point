@@ -12,7 +12,9 @@ export type PointTemplate = {
   textColor?: string;
   size: Size;
   groupingEnabled: boolean;
-  width: number;
+  inputWidth: number;
+  layoutWidth: number;
+  layoutHeight: number;
 };
 
 export type PointWidgetProps = {

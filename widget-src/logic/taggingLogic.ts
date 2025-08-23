@@ -18,7 +18,9 @@ export const createPointTemplateFromWidget = (widget: WidgetNode): PointTemplate
     textColor: widget.widgetSyncedState.textColor as string,
     size: widget.widgetSyncedState.size as Size || 'small',
     groupingEnabled: widget.widgetSyncedState.groupingEnabled as boolean || false,
-    width: widget.widgetSyncedState.width as number,
+    inputWidth: widget.widgetSyncedState.width as number,
+    layoutWidth: widget.width,
+    layoutHeight: widget.height,
   };
 
   return template;
@@ -46,7 +48,7 @@ export const filterNewTemplates = (
         template.textColor === (widget.widgetSyncedState.textColor as string) &&
         template.size === (widget.widgetSyncedState.size as Size || 'small') &&
         template.groupingEnabled === (widget.widgetSyncedState.groupingEnabled as boolean || false) &&
-        template.width === (widget.widgetSyncedState.width as number)
+        template.inputWidth === (widget.widgetSyncedState.width as number)
       );
     });
 
