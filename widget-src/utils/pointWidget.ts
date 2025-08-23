@@ -4,7 +4,7 @@ import { PointWidget } from '../components/PointWidget';
 /**
  * 指定されたノードがこのウィジェットの「Point Widget」であるかを判定する型ガード関数。
  */
-const isPointWidget = (node: SceneNode): node is WidgetNode => {
+export const isPointWidget = (node: BaseNode): node is WidgetNode => {
   // widgetSyncedStateの存在をチェックして、より安全なアクセスを保証します。
   return node.type === 'WIDGET' && 
          node.widgetId === figma.widgetId && 

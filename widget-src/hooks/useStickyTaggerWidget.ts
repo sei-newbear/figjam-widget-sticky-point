@@ -4,6 +4,7 @@ const { useSyncedState, useWidgetNodeId } = widget;
 import { getPointWidgetsFromSceneNodes, applyPointWidgetToStickies, deletePointWidgets } from '../utils/pointWidget';
 import { createPointTemplateFromWidget, filterNewTemplates } from '../logic/taggingLogic';
 import { PointTemplate, StickyTaggerSizeMode } from '../types';
+import { isPointWidget } from '../utils/pointWidget';
 
 export const useStickyTaggerWidget = () => {
   const widgetId = useWidgetNodeId();
@@ -12,6 +13,7 @@ export const useStickyTaggerWidget = () => {
   const [templateIdToDelete, setTemplateIdToDelete] = useSyncedState<string | null>('templateIdToDelete', null);
   const [showConfirmBulkDelete, setShowConfirmBulkDelete] = useSyncedState('showConfirmBulkDelete', false);
   const [widgetsToDeleteCount, setWidgetsToDeleteCount] = useSyncedState('widgetsToDeleteCount', 0);
+  const [widgetsToDeleteIds, setWidgetsToDeleteIds] = useSyncedState<string[]>('widgetsToDeleteIds', []);
   const [stickyTaggerSizeMode, setStickyTaggerSizeMode] = useSyncedState<StickyTaggerSizeMode>('stickyTaggerSizeMode', 'normal');
 
   // --- Tag Application ---
@@ -119,16 +121,21 @@ export const useStickyTaggerWidget = () => {
       return;
     }
     setWidgetsToDeleteCount(pointWidgetsToDelete.length);
+    setWidgetsToDeleteIds(pointWidgetsToDelete.map(w => w.id));
     setShowConfirmBulkDelete(true);
   };
 
-  const confirmBulkDelete = () => {
-    const selection = figma.currentPage.selection;
-    const pointWidgetsToDelete = getPointWidgetsFromSceneNodes(selection);
+  const confirmBulkDelete = async () => {
+    const widgetsToDelete: WidgetNode[] = [];
+    for (const id of widgetsToDeleteIds) {
+      const node = await figma.getNodeByIdAsync(id);
+      if (node && isPointWidget(node)) {
+        widgetsToDelete.push(node);
+      }
+    }
 
-    const deleteCount = deletePointWidgets(pointWidgetsToDelete);
+    const deleteCount = deletePointWidgets(widgetsToDelete);
 
-    // Notification logic
     if (deleteCount > 0) {
       figma.notify(`Successfully deleted ${deleteCount} 'Point' widget(s).`);
     } else {
@@ -137,11 +144,13 @@ export const useStickyTaggerWidget = () => {
     
     setShowConfirmBulkDelete(false);
     setWidgetsToDeleteCount(0);
+    setWidgetsToDeleteIds([]);
   };
 
   const cancelBulkDelete = () => {
     setShowConfirmBulkDelete(false);
     setWidgetsToDeleteCount(0);
+    setWidgetsToDeleteIds([]);
     figma.notify('Bulk deletion cancelled.');
   };
 
