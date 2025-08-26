@@ -1,3 +1,10 @@
+## v17
+Dynamic Tag Button Sizing in Sticky Tagger
+
+This update enhances the Sticky Tagger by making the tag buttons in the palette dynamically reflect the size of the original Point Widgets.
+
+- New - Dynamic Tag Sizes: When you add a Point Widget to the Sticky Tagger palette, the resulting tag button will now automatically match the size (small, medium, or large) of the original widget. This provides better visual consistency and makes it easier to identify different types of points at a glance.
+
 ## v16
 Improvements and Refinements
 
