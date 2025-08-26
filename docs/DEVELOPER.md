@@ -36,6 +36,7 @@
     - `types.ts`: ウィジェット全体で使用されるTypeScriptの型定義を格納します。
     - `utils/`: 特定のコンポーネントやフックに依存しない、汎用的なユーティリティ関数を格納します。
         - `grouping.ts`: オブジェクトのグループ化に関連するユーティリティ関数です。
+        - `icons.ts`: アイコンのSVGデータを生成するユーティリティ関数です。
         - `pointWidget.ts`: Point Widgetの作成や操作に関するユーティリティ関数です。
     - `tsconfig.json`: TypeScriptのコンパイル設定を定義します。
 - `dist/`: ビルドされたJavaScriptファイルが格納されます。
