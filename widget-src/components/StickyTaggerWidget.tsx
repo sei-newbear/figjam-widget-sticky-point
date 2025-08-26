@@ -2,8 +2,20 @@ const { widget } = figma;
 const { AutoLayout, Text, SVG } = widget;
 
 import { useStickyTaggerWidget } from '../hooks/useStickyTaggerWidget';
-import { StickyTaggerSizeMode } from '../types';
+import { StickyTaggerSizeMode, Size } from '../types';
 import { getTagIconSvg } from '../utils/icons';
+import { sizeConfig } from './PointWidget';
+
+// Helper function to determine dimensions based on size
+const getTagButtonDimensions = (size: Size) => {
+  const config = sizeConfig[size] || sizeConfig.medium;
+  return {
+    fontSize: config.fontSize,
+    cornerRadius: config.cornerRadius,
+    // iconSize is derived from fontSize for visual balance, as it's not in the original PointWidget config
+    iconSize: config.fontSize * 0.8,
+  };
+};
 
 export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeMode: StickyTaggerSizeMode }) {
   const {
@@ -38,30 +50,35 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
           <SVG src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(25 12 12)"><path d="M19.5 10.5L12 3L4.5 10.5V19.5C4.5 20.0523 4.94772 20.5 5.5 20.5H18.5C19.0523 20.5 19.5 20.0523 19.5 19.5V10.5Z" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7.5" r="1.5" fill="#1A1A1A"/></svg>`} width={16} height={16} />
         </AutoLayout>
         {templates.length > 0 ? (
-        <AutoLayout direction="horizontal" spacing={12} horizontalAlignItems="start" wrap>
-          {[...templates].sort((a, b) => a.point - b.point).map((template) => (
-            <AutoLayout
-              key={template.id}
-              onClick={() => handleTemplateClick(template)}
-              fill={template.backgroundColor || '#007BFF'}
-              cornerRadius={8}
-              padding={{ horizontal: 10, vertical: 5 }}
-              horizontalAlignItems="center"
-              verticalAlignItems="center"
-              hoverStyle={{ opacity: 0.9 }}
-              stroke={'#000000'}
-              strokeWidth={1}
-            >
-              <AutoLayout horizontalAlignItems="center" verticalAlignItems="center" spacing={4}>
-                <SVG
-                  width={16}
-                  height={16}
-                  src={getTagIconSvg(template.textColor || '#FFFFFF')}
-                />
-                <Text fill={template.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{template.point}</Text>
+        <AutoLayout direction="horizontal" spacing={8} horizontalAlignItems="start" verticalAlignItems="center" wrap>
+          {[...templates].sort((a, b) => a.point - b.point).map((template) => {
+            const { iconSize, fontSize, cornerRadius } = getTagButtonDimensions(template.size);
+            return (
+              <AutoLayout
+                key={template.id}
+                onClick={() => handleTemplateClick(template)}
+                fill={template.backgroundColor || '#007BFF'}
+                cornerRadius={cornerRadius}
+                padding={{ horizontal: 10, vertical: 5 }}
+                horizontalAlignItems="center"
+                verticalAlignItems="center"
+                hoverStyle={{ opacity: 0.9 }}
+                stroke={'#000000'}
+                strokeWidth={1}
+                width={template.layoutWidth}
+                height={template.layoutHeight}
+              >
+                <AutoLayout horizontalAlignItems="center" verticalAlignItems="center" spacing={4}>
+                  <SVG
+                    width={iconSize}
+                    height={iconSize}
+                    src={getTagIconSvg(template.textColor || '#FFFFFF')}
+                  />
+                  <Text fill={template.textColor || '#FFFFFF'} fontSize={fontSize} fontWeight={600}>{template.point}</Text>
+                </AutoLayout>
               </AutoLayout>
-            </AutoLayout>
-          ))}
+            );
+          })}
         </AutoLayout>
       ) : (
         <Text fontSize={14} fill={'#6C757D'}>No templates. Switch to normal mode to add tags.</Text>
@@ -141,47 +158,52 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
 
       {templates.length > 0 ? (
         <AutoLayout direction="vertical" spacing={8} width="fill-parent" horizontalAlignItems="start" padding={{ left: 8 }}>
-          {[...templates].sort((a, b) => a.point - b.point).map((template) => (
-            <AutoLayout
-              key={template.id}
-              direction="horizontal"
-              verticalAlignItems="center"
-              spacing={4}
-            >
+          {[...templates].sort((a, b) => a.point - b.point).map((template) => {
+            const { iconSize, fontSize, cornerRadius } = getTagButtonDimensions(template.size);
+            return (
               <AutoLayout
-                onClick={() => handleTemplateClick(template)}
-                fill={template.backgroundColor || '#007BFF'}
-                cornerRadius={8}
-                padding={{ horizontal: 10, vertical: 5 }}
-                horizontalAlignItems="center"
+                key={template.id}
+                direction="horizontal"
                 verticalAlignItems="center"
-                hoverStyle={{ opacity: 0.9 }}
-                stroke={'#000000'}
-                strokeWidth={1}
+                spacing={4}
               >
-                <AutoLayout horizontalAlignItems="center" verticalAlignItems="center" spacing={4}>
-                  <SVG
-                    width={16}
-                    height={16}
-                    src={getTagIconSvg(template.textColor || '#FFFFFF')}
-                  />
-                  <Text fill={template.textColor || '#FFFFFF'} fontSize={14} fontWeight={600}>{template.point}</Text>
+                <AutoLayout
+                  onClick={() => handleTemplateClick(template)}
+                  fill={template.backgroundColor || '#007BFF'}
+                  cornerRadius={cornerRadius}
+                  padding={{ horizontal: 10, vertical: 5 }}
+                  horizontalAlignItems="center"
+                  verticalAlignItems="center"
+                  hoverStyle={{ opacity: 0.9 }}
+                  stroke={'#000000'}
+                  strokeWidth={1}
+                  width={template.layoutWidth}
+                  height={template.layoutHeight}
+                >
+                  <AutoLayout horizontalAlignItems="center" verticalAlignItems="center" spacing={4}>
+                    <SVG
+                      width={iconSize}
+                      height={iconSize}
+                      src={getTagIconSvg(template.textColor || '#FFFFFF')}
+                    />
+                    <Text fill={template.textColor || '#FFFFFF'} fontSize={fontSize} fontWeight={600}>{template.point}</Text>
+                  </AutoLayout>
+                </AutoLayout>
+                <AutoLayout
+                  onClick={() => handleDeleteTemplate(template.id)}
+                  fill={'#DC3545'}
+                  cornerRadius={999}
+                  width={20}
+                  height={20}
+                  horizontalAlignItems="center"
+                  verticalAlignItems="center"
+                  hoverStyle={{ opacity: 0.9 }}
+                >
+                  <Text fill={'#FFFFFF'} fontSize={12} fontWeight={600}>X</Text>
                 </AutoLayout>
               </AutoLayout>
-              <AutoLayout
-                onClick={() => handleDeleteTemplate(template.id)}
-                fill={'#DC3545'}
-                cornerRadius={999}
-                width={20}
-                height={20}
-                horizontalAlignItems="center"
-                verticalAlignItems="center"
-                hoverStyle={{ opacity: 0.9 }}
-              >
-                <Text fill={'#FFFFFF'} fontSize={12} fontWeight={600}>X</Text>
-              </AutoLayout>
-            </AutoLayout>
-          ))}
+            );
+          })}
         </AutoLayout>
       ) : (
         <Text fontSize={14} fill={'#6C757D'}>No templates registered yet.</Text>
