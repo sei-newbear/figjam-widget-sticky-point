@@ -2,7 +2,7 @@ export type WidgetType = 'point' | 'counter' | 'organizer' | 'stickyTagger'
 export type Size = 'small' | 'medium' | 'large'
 export type CounterSizeMode = 'normal' | 'compact'
 export type StickyTaggerSizeMode = 'normal' | 'compact'
-export type CountTarget = 'section' | 'selection' | 'linked_section'
+export type CountTarget = 'section' | 'selection' | 'locked_section'
 
 export type PointTemplate = {
   id: string;
