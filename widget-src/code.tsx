@@ -17,7 +17,7 @@ function Widget() {
   const [width, setWidth] = useSyncedState<number>('width', 72)
   const [counterSizeMode, setCounterSizeMode] = useSyncedState<CounterSizeMode>('counterSizeMode', 'normal')
   const [stickyTaggerSizeMode, setStickyTaggerSizeMode] = useSyncedState<StickyTaggerSizeMode>('stickyTaggerSizeMode', 'normal')
-  const [countTarget, setCountTarget] = useSyncedState<CountTarget>('countTarget', 'manual')
+  const [countTarget, setCountTarget] = useSyncedState<CountTarget>('countTarget', 'selection')
   const [groupingEnabled, setGroupingEnabled] = useSyncedState<boolean>('groupingEnabled', false)
 
   useWidgetPropertyMenu(

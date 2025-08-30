@@ -130,8 +130,9 @@ export function useWidgetPropertyMenu(
               tooltip: 'Count Target',
               selectedOption: countTarget,
               options: [
-                { option: 'manual', label: 'Manual Selection' },
-                { option: 'section', label: 'Containing Section' },
+                { option: 'selection', label: 'Selected items' },
+                { option: 'section', label: 'In parent section' },
+                { option: 'linked_section', label: 'Linked section' },
               ],
             },
           ]
