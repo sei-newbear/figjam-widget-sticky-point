@@ -33,6 +33,8 @@ export function useCounterWidget(countTarget: CountTarget) {
       if (!lockedSectionId) {
         setSelectionInfo('No section locked')
         figma.notify('Please lock on a section first.')
+        setTotal(0)
+        setPointCounts({})
         return
       }
       const sectionNode = await figma.getNodeByIdAsync(lockedSectionId)
@@ -40,6 +42,8 @@ export function useCounterWidget(countTarget: CountTarget) {
         setLockedSectionId(null)
         setSelectionInfo('No section locked')
         figma.notify('The locked section was not found. Please lock on a new one.')
+        setTotal(0)
+        setPointCounts({})
         return
       }
 
