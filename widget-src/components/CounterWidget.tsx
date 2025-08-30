@@ -91,7 +91,7 @@ export function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMod
           spacing={8}
           onClick={handleLinkSection}
           hoverStyle={{ fill: '#E6F7FF' }}
-          width={'fill-parent'}
+          width={'hug-contents'}
         >
           <Text fontSize={14} fontWeight={600} fill={'#0066FF'}>
             🔗 Link to selected section
