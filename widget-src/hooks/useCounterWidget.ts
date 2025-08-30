@@ -4,7 +4,7 @@ const { useSyncedState, useWidgetNodeId } = widget
 import { CountTarget } from '../types'
 import { getPointWidgetsFromSceneNodes } from '../utils/pointWidget'
 import { calculatePoints } from '../logic/calculation'
-import { isInside } from '../utils/isInside'
+import { isOverlapping } from '../logic/isOverlapping'
 
 export function useCounterWidget(countTarget: CountTarget) {
   const [total, setTotal] = useSyncedState('total', 0)
@@ -47,7 +47,14 @@ export function useCounterWidget(countTarget: CountTarget) {
       if (sectionNode.locked) {
         const allWidgets = await figma.currentPage.findAllWithCriteria({ types: ['WIDGET'] })
         const allPointWidgets = getPointWidgetsFromSceneNodes(allWidgets)
-        pointWidgets = allPointWidgets.filter(widget => isInside(widget, sectionNode))
+        pointWidgets = allPointWidgets.filter(widget => {
+          let nodeToCheck: SceneNode = widget
+          const hostNode = widget.stuckTo
+          if (hostNode) {
+            nodeToCheck = hostNode
+          }
+          return isOverlapping(nodeToCheck, sectionNode)
+        })
       } else {
         pointWidgets = getPointWidgetsFromSceneNodes([sectionNode])
       }
