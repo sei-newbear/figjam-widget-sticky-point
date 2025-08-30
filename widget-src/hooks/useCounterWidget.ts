@@ -1,4 +1,3 @@
-
 const { widget } = figma
 const { useSyncedState, useWidgetNodeId } = widget
 import { CountTarget } from '../types'
@@ -11,18 +10,18 @@ export function useCounterWidget(countTarget: CountTarget) {
   const [pointCounts, setPointCounts] = useSyncedState<{ [point: number]: number }>('pointCounts', {})
   const [showDetails, setShowDetails] = useSyncedState('showDetails', false)
   const [selectionInfo, setSelectionInfo] = useSyncedState('selectionInfo', 'Not selected')
-  const [linkedSectionId, setLinkedSectionId] = useSyncedState<string | null>('linkedSectionId', null)
+  const [lockedSectionId, setLockedSectionId] = useSyncedState<string | null>('lockedSectionId', null)
   const widgetId = useWidgetNodeId()
 
-  const handleLinkSection = async () => {
+  const handleLockSection = async () => {
     const selection = figma.currentPage.selection
     if (selection.length === 1 && selection[0].type === 'SECTION') {
       const sectionNode = selection[0]
-      setLinkedSectionId(sectionNode.id)
-      setSelectionInfo(`Linked to: ${sectionNode.name}`)
-      figma.notify(`Linked to section: "${sectionNode.name}"`);
+      setLockedSectionId(sectionNode.id)
+      setSelectionInfo(`Locked on: ${sectionNode.name}`)
+      figma.notify(`Locked on section: "${sectionNode.name}"`);
     } else {
-      figma.notify('Please select a single section to link.')
+      figma.notify('Please select a single section to lock on.')
     }
   }
 
@@ -30,17 +29,17 @@ export function useCounterWidget(countTarget: CountTarget) {
     let pointWidgets: WidgetNode[] = []
     const widgetNode = await figma.getNodeByIdAsync(widgetId)
 
-    if (countTarget === 'linked_section') {
-      if (!linkedSectionId) {
-        setSelectionInfo('No section linked')
-        figma.notify('Please link a section first.')
+    if (countTarget === 'locked_section') {
+      if (!lockedSectionId) {
+        setSelectionInfo('No section locked')
+        figma.notify('Please lock on a section first.')
         return
       }
-      const sectionNode = await figma.getNodeByIdAsync(linkedSectionId)
+      const sectionNode = await figma.getNodeByIdAsync(lockedSectionId)
       if (!sectionNode || sectionNode.type !== 'SECTION') {
-        setLinkedSectionId(null)
-        setSelectionInfo('No section linked')
-        figma.notify('The linked section was not found. Please link a new one.')
+        setLockedSectionId(null)
+        setSelectionInfo('No section locked')
+        figma.notify('The locked section was not found. Please lock on a new one.')
         return
       }
 
@@ -58,7 +57,7 @@ export function useCounterWidget(countTarget: CountTarget) {
       } else {
         pointWidgets = getPointWidgetsFromSceneNodes([sectionNode])
       }
-      setSelectionInfo(`Linked to: ${sectionNode.name}`)
+      setSelectionInfo(`Locked on: ${sectionNode.name}`)
 
     } else if (countTarget === 'section') {
       if (widgetNode && widgetNode.parent && widgetNode.parent.type === 'SECTION') {
@@ -100,5 +99,5 @@ export function useCounterWidget(countTarget: CountTarget) {
     setPointCounts(pointCounts)
   }
 
-  return { total, pointCounts, showDetails, selectionInfo, setShowDetails, calculateTotal, handleLinkSection }
+  return { total, pointCounts, showDetails, selectionInfo, setShowDetails, calculateTotal, handleLockSection }
 }

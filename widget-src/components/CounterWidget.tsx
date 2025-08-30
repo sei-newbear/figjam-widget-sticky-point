@@ -1,20 +1,22 @@
-
 const { widget } = figma
 const { AutoLayout, Text, SVG } = widget
 import { CounterSizeMode, CountTarget } from '../types'
 import { useCounterWidget } from '../hooks/useCounterWidget'
 
+// Common icon for the 'locked' state
+const lockIconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#0066FF" stroke-width="3"/><path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="#0066FF" stroke-width="3" stroke-linecap="round"/></svg>`
+
 const CountModeIcon = ({ countTarget }: { countTarget: CountTarget }) => {
   const iconSrc = 
-    countTarget === 'linked_section'
-      ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.19 8.68994C13.19 8.68994 15.04 7.44994 16.5 8.90994C17.96 10.37 16.72 12.22 16.72 12.22L12.22 16.72C12.22 16.72 10.37 17.96 8.91 16.5C7.45 15.04 8.69 13.19 8.69 13.19L13.19 8.68994Z" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.69006 8.68994L7.23006 7.22994C5.77006 5.76994 3.35006 6.14994 2.50006 7.94994C1.65006 9.74994 2.73006 11.8199 4.19006 12.9199L5.44006 13.8199" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.31 15.31L16.77 16.77C18.23 18.23 20.65 17.85 21.5 16.05C22.35 14.25 21.27 12.18 19.81 11.08L18.56 10.18" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    countTarget === 'locked_section'
+      ? lockIconSvg
     : countTarget === 'section'
       ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 8V16C21 18.2091 19.2091 20 17 20H7C4.79086 20 3 18.2091 3 16V8C3 5.79086 4.79086 4 7 4H17C19.2091 4 21 5.79086 21 8Z" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 10H21" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
       : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.63 18.342L8.82 13.638L4.116 11.828L19.5 4.5L10.63 18.342Z" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.25 13.25L8.816 13.638" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 
   const tooltip = 
-    countTarget === 'linked_section'
-      ? 'Counting items in a linked section'
+    countTarget === 'locked_section'
+      ? 'Counting items in the locked section'
       : countTarget === 'section'
         ? 'Counting items in parent section'
         : 'Counting selected items'
@@ -27,7 +29,7 @@ const CountModeIcon = ({ countTarget }: { countTarget: CountTarget }) => {
 }
 
 export function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: CounterSizeMode, countTarget: CountTarget }) {
-  const { total, pointCounts, showDetails, selectionInfo, setShowDetails, calculateTotal, handleLinkSection } = useCounterWidget(countTarget)
+  const { total, pointCounts, showDetails, selectionInfo, setShowDetails, calculateTotal, handleLockSection } = useCounterWidget(countTarget)
 
   if (counterSizeMode === 'compact') {
     return (
@@ -79,7 +81,7 @@ export function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMod
       </AutoLayout>
       <Text fontSize={14} fill={'#6C757D'}>{selectionInfo}</Text>
 
-      {countTarget === 'linked_section' && (
+      {countTarget === 'locked_section' && (
         <AutoLayout
           padding={8}
           cornerRadius={8}
@@ -89,12 +91,17 @@ export function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMod
           horizontalAlignItems={'center'}
           verticalAlignItems={'center'}
           spacing={8}
-          onClick={handleLinkSection}
+          onClick={handleLockSection}
           hoverStyle={{ fill: '#E6F7FF' }}
           width={'hug-contents'}
         >
+          <SVG
+            width={14}
+            height={14}
+            src={lockIconSvg}
+          />
           <Text fontSize={14} fontWeight={600} fill={'#0066FF'}>
-            🔗 Link to selected section
+            Lock on selected section
           </Text>
         </AutoLayout>
       )}
