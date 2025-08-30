@@ -3,13 +3,14 @@ const { AutoLayout, Text, SVG } = widget
 import { CounterSizeMode, CountTarget } from '../types'
 import { useCounterWidget } from '../hooks/useCounterWidget'
 
-// Common icon for the 'locked' state
-const lockIconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#0066FF" stroke-width="3"/><path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="#0066FF" stroke-width="3" stroke-linecap="round"/></svg>`
+const greyClosedLockSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#6C757D" stroke-width="3"/><path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="#6C757D" stroke-width="3" stroke-linecap="round"/></svg>`
+const blueClosedLockSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#0066FF" stroke-width="3"/><path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="#0066FF" stroke-width="3" stroke-linecap="round"/></svg>`
+const blueOpenLockSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#0066FF" stroke-width="3"/><path d="M8 11V7C8 4.79086 9.79086 3 12 3" stroke="#0066FF" stroke-width="3" stroke-linecap="round"/></svg>`
 
 const CountModeIcon = ({ countTarget }: { countTarget: CountTarget }) => {
   const iconSrc = 
     countTarget === 'locked_section'
-      ? lockIconSvg
+      ? greyClosedLockSvg
     : countTarget === 'section'
       ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 8V16C21 18.2091 19.2091 20 17 20H7C4.79086 20 3 18.2091 3 16V8C3 5.79086 4.79086 4 7 4H17C19.2091 4 21 5.79086 21 8Z" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 10H21" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
       : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.63 18.342L8.82 13.638L4.116 11.828L19.5 4.5L10.63 18.342Z" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.25 13.25L8.816 13.638" stroke="#6C757D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`
@@ -29,7 +30,7 @@ const CountModeIcon = ({ countTarget }: { countTarget: CountTarget }) => {
 }
 
 export function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMode: CounterSizeMode, countTarget: CountTarget }) {
-  const { total, pointCounts, showDetails, selectionInfo, setShowDetails, calculateTotal, handleLockSection } = useCounterWidget(countTarget)
+  const { total, pointCounts, showDetails, selectionInfo, setShowDetails, calculateTotal, handleLockSection, lockedSectionId } = useCounterWidget(countTarget)
 
   if (counterSizeMode === 'compact') {
     return (
@@ -98,7 +99,7 @@ export function CounterWidget({ counterSizeMode, countTarget }: { counterSizeMod
           <SVG
             width={14}
             height={14}
-            src={lockIconSvg}
+            src={lockedSectionId ? blueClosedLockSvg : blueOpenLockSvg}
           />
           <Text fontSize={14} fontWeight={600} fill={'#0066FF'}>
             Lock on selected section

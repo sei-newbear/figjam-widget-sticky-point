@@ -99,5 +99,5 @@ export function useCounterWidget(countTarget: CountTarget) {
     setPointCounts(pointCounts)
   }
 
-  return { total, pointCounts, showDetails, selectionInfo, setShowDetails, calculateTotal, handleLockSection }
+  return { total, pointCounts, showDetails, selectionInfo, setShowDetails, calculateTotal, handleLockSection, lockedSectionId }
 }
