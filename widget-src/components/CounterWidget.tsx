@@ -15,7 +15,7 @@ const CountModeIcon = ({
   lockedSectionId,
 }: {
   countTarget: CountTarget
-  onClick?: (e: any) => void
+  onClick?: (e: WidgetClickEvent) => void
   overrideTooltip?: string
   lockedSectionId?: string | null
 }) => {
