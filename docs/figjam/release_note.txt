@@ -1,3 +1,11 @@
+## v18
+Counter Widget Enhancements
+
+This update introduces significant improvements to the Counter Widget, allowing for more flexible and precise counting of Point Widgets.
+
+- New - Locked Section Counting: You can now lock the Counter Widget to a specific section on your board. This enables the widget to continuously count all Point Widgets within that designated section, regardless of whether the section is currently selected or locked. This is particularly useful for tracking progress in specific areas of your FigJam board.
+- Improved - Count Target Options: The "Count Target" options in the Counter Widget's property menu have been refined for clarity. "Manual Selection" is now "Selection", and "Containing Section" is now "Parent Section". The new "Locked Section" option has also been added.
+
 ## v17
 Dynamic Tag Button Sizing in Sticky Tagger
 
