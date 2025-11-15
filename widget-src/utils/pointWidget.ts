@@ -60,7 +60,8 @@ function getPointWidgets(node: SceneNode): WidgetNode[] {
 export const applyPointWidgetToStickies = async (
   stickyTaggerWidgetId: string,
   template: PointTemplate,
-  stickyNotes: readonly SceneNode[]
+  stickyNotes: readonly SceneNode[],
+  options: { isOverwriteEnabled: boolean } = { isOverwriteEnabled: false }
 ): Promise<{ appliedCount: number; skippedCount: number }> => {
   let appliedCount = 0;
   let skippedCount = 0;
@@ -73,16 +74,21 @@ export const applyPointWidgetToStickies = async (
   const stickyTagger = stickyTaggerNode as WidgetNode;
 
   for (const stickyNote of stickyNotes) {
-    // `stuckNodes` プロパティを持つかチェックし、型を絞り込みます
     if (!('stuckNodes' in stickyNote) || !(stickyNote.type === 'STICKY')) {
       continue;
     }
 
-    const hasExistingPointWidget = stickyNote.stuckNodes.some(isPointWidget);
+    const existingPointWidgets = stickyNote.stuckNodes.filter(isPointWidget);
 
-    if (hasExistingPointWidget) {
-      skippedCount++;
-      continue;
+    if (existingPointWidgets.length > 0) {
+      if (options.isOverwriteEnabled) {
+        // 上書きモードがONの場合、既存のウィジェットを削除
+        deletePointWidgets(existingPointWidgets);
+      } else {
+        // 上書きモードがOFFの場合、スキップ
+        skippedCount++;
+        continue;
+      }
     }
 
     const newPointWidget = stickyTagger.cloneWidget({

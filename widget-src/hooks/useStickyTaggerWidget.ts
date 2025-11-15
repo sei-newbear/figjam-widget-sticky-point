@@ -16,6 +16,8 @@ export const useStickyTaggerWidget = () => {
   const [widgetsToDeleteIds, setWidgetsToDeleteIds] = useSyncedState<string[]>('widgetsToDeleteIds', []);
   const [stickyTaggerSizeMode, setStickyTaggerSizeMode] = useSyncedState<StickyTaggerSizeMode>('stickyTaggerSizeMode', 'normal');
 
+  const [isOverwriteEnabled, setIsOverwriteEnabled] = useSyncedState<boolean>('isOverwriteEnabled', false);
+
   // --- Tag Application ---
 
   const handleTemplateClick = async (template: PointTemplate) => {
@@ -27,7 +29,7 @@ export const useStickyTaggerWidget = () => {
       return;
     }
 
-    const { appliedCount, skippedCount } = await applyPointWidgetToStickies(widgetId, template, stickyNotes);
+    const { appliedCount, skippedCount } = await applyPointWidgetToStickies(widgetId, template, stickyNotes, { isOverwriteEnabled });
 
     // Notification logic
     let message = '';
@@ -174,5 +176,7 @@ export const useStickyTaggerWidget = () => {
     cancelBulkDelete,
     stickyTaggerSizeMode,
     setStickyTaggerSizeMode,
+    isOverwriteEnabled,
+    setIsOverwriteEnabled,
   };
 };

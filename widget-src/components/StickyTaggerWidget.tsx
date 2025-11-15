@@ -32,6 +32,8 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
     confirmBulkDelete,
     cancelBulkDelete,
     templateToDelete,
+    isOverwriteEnabled, // 追加
+    setIsOverwriteEnabled, // 追加
   } = useStickyTaggerWidget();
 
   if (stickyTaggerSizeMode === 'compact') {
@@ -152,6 +154,38 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
             >
               <Text fontSize={10} fontWeight={700} fill={'#6C757D'} hoverStyle={{ fill: '#1A1A1A' }}>i</Text>
             </AutoLayout>
+          </AutoLayout>
+
+          {/* --- Overwrite Checkbox --- */}
+          <AutoLayout
+            spacing={6}
+            verticalAlignItems="center"
+            onClick={() => setIsOverwriteEnabled(!isOverwriteEnabled)}
+            hoverStyle={{ opacity: 0.8 }}
+            cornerRadius={4}
+            padding={{left: 4, right: 4}}
+          >
+            <AutoLayout
+              width={14}
+              height={14}
+              stroke={'#888'}
+              strokeWidth={1.5}
+              cornerRadius={3}
+              verticalAlignItems="center"
+              horizontalAlignItems="center"
+              fill={isOverwriteEnabled ? '#007BFF' : '#FFFFFF'}
+            >
+              {isOverwriteEnabled && (
+                <SVG
+                  width={10}
+                  height={10}
+                  src={`<svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>`}
+                />
+              )}
+            </AutoLayout>
+            <Text fontSize={12} fill={'#333'}>Overwrite existing tags</Text>
           </AutoLayout>
         </AutoLayout>
       </AutoLayout>
