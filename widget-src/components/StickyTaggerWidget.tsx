@@ -4,7 +4,7 @@ const { AutoLayout, Text, SVG } = widget;
 import { useStickyTaggerWidget } from '../hooks/useStickyTaggerWidget';
 import { StickyTaggerSizeMode, Size } from '../types';
 import { getTagIconSvg } from '../utils/icons';
-import { sizeConfig } from './PointWidget';
+import { sizeConfig } from '../config';
 
 // Helper function to determine dimensions based on size
 const getTagButtonDimensions = (size: Size) => {
