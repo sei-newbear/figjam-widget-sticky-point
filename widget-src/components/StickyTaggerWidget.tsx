@@ -7,8 +7,9 @@ import { getTagIconSvg } from '../utils/icons';
 import { sizeConfig } from '../config';
 
 // Helper function to determine dimensions based on size
-const getTagButtonDimensions = (size: Size) => {
-  const config = sizeConfig[size] || sizeConfig.medium;
+const getTagButtonDimensions = (size: Size | undefined | null) => {
+  const effectiveSize = size || 'medium';
+  const config = sizeConfig[effectiveSize] || sizeConfig.medium;
   return {
     fontSize: config.fontSize,
     cornerRadius: config.cornerRadius,
@@ -40,51 +41,82 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
     return (
       <AutoLayout
         verticalAlignItems={'center'}
-        horizontalAlignItems={'start'}
-        spacing={8}
+        spacing={{ horizontal: 'auto' }}
+        minWidth={200}
+        width={'hug-contents'}
         padding={{ vertical: 12, left: 8, right: 20 }}
         cornerRadius={8}
         fill={'#FFFFFF'}
         stroke={'#E0E0E0'}
         strokeWidth={1}
       >
-        <AutoLayout tooltip="Click a tag to apply. Switch to normal mode to manage tags." horizontalAlignItems="center" spacing={4}>
-          <SVG src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(25 12 12)"><path d="M19.5 10.5L12 3L4.5 10.5V19.5C4.5 20.0523 4.94772 20.5 5.5 20.5H18.5C19.0523 20.5 19.5 20.0523 19.5 19.5V10.5Z" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7.5" r="1.5" fill="#1A1A1A"/></svg>`} width={16} height={16} />
+        <AutoLayout direction="horizontal" spacing={12} verticalAlignItems="center" horizontalAlignItems="start" padding={{ right: 12 }}>
+          <AutoLayout tooltip="Click a tag to apply. Switch to normal mode to manage tags." horizontalAlignItems="center" spacing={4}>
+            <SVG src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(25 12 12)"><path d="M19.5 10.5L12 3L4.5 10.5V19.5C4.5 20.0523 4.94772 20.5 5.5 20.5H18.5C19.0523 20.5 19.5 20.0523 19.5 19.5V10.5Z" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7.5" r="1.5" fill="#1A1A1A"/></svg>`} width={16} height={16} />
+          </AutoLayout>
+          {templates.length > 0 ? (
+            <AutoLayout
+              direction="horizontal"
+              spacing={8}
+              horizontalAlignItems="start"
+              verticalAlignItems="center"
+            >
+              {[...templates].sort((a, b) => a.point - b.point).map((template) => {
+                const { iconSize, fontSize, cornerRadius } = getTagButtonDimensions(template.size);
+                return (
+                  <AutoLayout
+                    key={template.id}
+                    onClick={() => handleTemplateClick(template)}
+                    fill={template.backgroundColor || '#007BFF'}
+                    cornerRadius={cornerRadius}
+                    padding={{ horizontal: 10, vertical: 5 }}
+                    horizontalAlignItems="center"
+                    verticalAlignItems="center"
+                    hoverStyle={{ opacity: 0.9 }}
+                    stroke={'#000000'}
+                    strokeWidth={1}
+                    width={template.layoutWidth}
+                    height={template.layoutHeight}
+                  >
+                    <AutoLayout horizontalAlignItems="center" verticalAlignItems="center" spacing={4}>
+                      <SVG
+                        width={iconSize}
+                        height={iconSize}
+                        src={getTagIconSvg(template.textColor || '#FFFFFF')}
+                      />
+                      <Text fill={template.textColor || '#FFFFFF'} fontSize={fontSize} fontWeight={600}>{template.point}</Text>
+                    </AutoLayout>
+                  </AutoLayout>
+                );
+              })}
+            </AutoLayout>
+          ) : (
+            <Text fontSize={14} fill={'#6C757D'}>No templates. Switch to normal mode to add tags.</Text>
+          )}
         </AutoLayout>
-        {templates.length > 0 ? (
-        <AutoLayout direction="horizontal" spacing={8} horizontalAlignItems="start" verticalAlignItems="center" wrap>
-          {[...templates].sort((a, b) => a.point - b.point).map((template) => {
-            const { iconSize, fontSize, cornerRadius } = getTagButtonDimensions(template.size);
-            return (
-              <AutoLayout
-                key={template.id}
-                onClick={() => handleTemplateClick(template)}
-                fill={template.backgroundColor || '#007BFF'}
-                cornerRadius={cornerRadius}
-                padding={{ horizontal: 10, vertical: 5 }}
-                horizontalAlignItems="center"
-                verticalAlignItems="center"
-                hoverStyle={{ opacity: 0.9 }}
-                stroke={'#000000'}
-                strokeWidth={1}
-                width={template.layoutWidth}
-                height={template.layoutHeight}
-              >
-                <AutoLayout horizontalAlignItems="center" verticalAlignItems="center" spacing={4}>
-                  <SVG
-                    width={iconSize}
-                    height={iconSize}
-                    src={getTagIconSvg(template.textColor || '#FFFFFF')}
-                  />
-                  <Text fill={template.textColor || '#FFFFFF'} fontSize={fontSize} fontWeight={600}>{template.point}</Text>
-                </AutoLayout>
-              </AutoLayout>
-            );
-          })}
+        <AutoLayout
+          tooltip="Overwrite existing point tags"
+          onClick={() => setIsOverwriteEnabled(!isOverwriteEnabled)}
+          padding={{ horizontal: 10, vertical: 8 }}
+          cornerRadius={8}
+          stroke={'#BDBDBD'}
+          strokeWidth={1}
+          horizontalAlignItems="center"
+          verticalAlignItems="center"
+          hoverStyle={{ opacity: 0.9 }}
+          fill={isOverwriteEnabled ? '#E0E0E0' : '#FFFFFF'}
+        >
+          <SVG
+            width={16}
+            height={16}
+            src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 7H21L17 3" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M17 17H3L7 21" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7 7L7 13" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M17 11L17 17" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>`}
+          />
         </AutoLayout>
-      ) : (
-        <Text fontSize={14} fill={'#6C757D'}>No templates. Switch to normal mode to add tags.</Text>
-      )}
       </AutoLayout>
     )
   }
