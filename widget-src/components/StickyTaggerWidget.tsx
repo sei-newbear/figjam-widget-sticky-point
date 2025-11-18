@@ -97,7 +97,7 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
         <AutoLayout
           tooltip="Overwrite existing point tags"
           onClick={() => setIsOverwriteEnabled(!isOverwriteEnabled)}
-          padding={{ horizontal: 10, vertical: 8 }}
+          padding={{ horizontal: 8, vertical: 6 }}
           cornerRadius={8}
           stroke={'#BDBDBD'}
           strokeWidth={1}
@@ -107,8 +107,8 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
           fill={isOverwriteEnabled ? '#E0E0E0' : '#FFFFFF'}
         >
           <SVG
-            width={16}
-            height={16}
+            width={14}
+            height={14}
             src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M7 7H21L17 3" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M17 17H3L7 21" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -188,36 +188,43 @@ export function StickyTaggerWidget({ stickyTaggerSizeMode }: { stickyTaggerSizeM
             </AutoLayout>
           </AutoLayout>
 
-          {/* --- Overwrite Checkbox --- */}
+          {/* --- Overwrite Toggle --- */}
           <AutoLayout
-            spacing={6}
+            spacing={10}
             verticalAlignItems="center"
             onClick={() => setIsOverwriteEnabled(!isOverwriteEnabled)}
-            hoverStyle={{ opacity: 0.8 }}
-            cornerRadius={4}
-            padding={{left: 4, right: 4}}
+            hoverStyle={{ opacity: 0.85 }}
+            cornerRadius={6}
+            padding={{ horizontal: 4, vertical: 4 }}
           >
             <AutoLayout
-              width={14}
-              height={14}
-              stroke={'#888'}
-              strokeWidth={1.5}
-              cornerRadius={3}
-              verticalAlignItems="center"
+              padding={{ horizontal: 8, vertical: 6 }}
+              cornerRadius={8}
+              stroke={'#BDBDBD'}
+              strokeWidth={1}
               horizontalAlignItems="center"
-              fill={isOverwriteEnabled ? '#007BFF' : '#FFFFFF'}
+              verticalAlignItems="center"
+              hoverStyle={{ opacity: 0.9 }}
+              fill={isOverwriteEnabled ? '#E0E0E0' : '#FFFFFF'}
             >
-              {isOverwriteEnabled && (
-                <SVG
-                  width={10}
-                  height={10}
-                  src={`<svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>`}
-                />
-              )}
+              <SVG
+                width={14}
+                height={14}
+                src={`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 7H21L17 3" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M17 17H3L7 21" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7 7L7 13" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M17 11L17 17" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>`}
+              />
             </AutoLayout>
-            <Text fontSize={12} fill={'#333'}>Overwrite existing tags</Text>
+            <AutoLayout
+              direction="vertical"
+              spacing={2}
+              tooltip="Replace tag on selected stickies"
+            >
+              <Text fontSize={14} fontWeight={600} fill={'#1A1A1A'}>Overwrite tags</Text>
+            </AutoLayout>
           </AutoLayout>
         </AutoLayout>
       </AutoLayout>
