@@ -1,3 +1,11 @@
+## v19
+New: Overwrite Mode for Point Tags
+
+This update introduces an "Overwrite" mode, allowing you to easily replace existing point tags on your sticky notes.
+
+- New - Overwrite Toggle: A new toggle button has been added to both the normal and compact views of the Sticky Tagger widget.
+- Improved - Tag Application: When "Overwrite" mode is enabled, applying a point tag to a sticky will replace any existing tag. When disabled (the default setting), stickies that already have a tag will be skipped as before.
+
 ## v18
 Counter Widget Enhancements
 
